@@ -1,38 +1,42 @@
 "use client";
 
-import { useState, useRef, useEffect, type MouseEvent } from "react";
+import { useState, useRef, useEffect, type MouseEvent, useCallback } from "react";
 import { generateDiscountCode, type DiscountCodeOutput } from "@/ai/flows/dynamic-discount-codes";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Gift, Loader2 } from "lucide-react";
+import { Gift, Loader2, AlertTriangle } from "lucide-react";
 import { Button } from "../ui/button";
 
 export default function DiscountGenerator() {
   const [discount, setDiscount] = useState<DiscountCodeOutput | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [isRevealed, setIsRevealed] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const isDrawing = useRef(false);
 
-  useEffect(() => {
-    async function getDiscount() {
-      try {
-        setLoading(true);
-        const result = await generateDiscountCode({});
-        setDiscount(result);
-      } catch (error) {
-        console.error("Failed to generate discount code:", error);
-      } finally {
-        setLoading(false);
-      }
+  const getDiscount = useCallback(async () => {
+    setError(null);
+    setLoading(true);
+    try {
+      const result = await generateDiscountCode({});
+      setDiscount(result);
+    } catch (error) {
+      console.error("Failed to generate discount code:", error);
+      setError("The discount generator is busy. Please try again.");
+    } finally {
+      setLoading(false);
     }
-    getDiscount();
   }, []);
+
+  useEffect(() => {
+    getDiscount();
+  }, [getDiscount]);
   
   const getCanvasContext = () => canvasRef.current?.getContext("2d");
 
   useEffect(() => {
     const context = getCanvasContext();
-    if (context && !loading) {
+    if (context && !loading && !error) {
       context.fillStyle = "#e6e6fa"; // Lavender accent color
       context.fillRect(0, 0, context.canvas.width, context.canvas.height);
       context.fillStyle = "#4169E1"; // Royal blue primary color
@@ -41,7 +45,7 @@ export default function DiscountGenerator() {
       context.textBaseline = "middle";
       context.fillText("SCRATCH TO REVEAL", context.canvas.width / 2, context.canvas.height / 2);
     }
-  }, [loading]);
+  }, [loading, error]);
 
   const scratch = (e: MouseEvent<HTMLCanvasElement>) => {
     if (!isDrawing.current || isRevealed) return;
@@ -104,6 +108,12 @@ export default function DiscountGenerator() {
               <div className="absolute inset-0 flex flex-col items-center justify-center bg-card rounded-lg border-2 border-dashed border-primary/50">
                 {loading ? (
                   <Loader2 className="h-12 w-12 animate-spin text-primary" />
+                ) : error ? (
+                    <div className="text-center">
+                      <AlertTriangle className="h-12 w-12 text-destructive mx-auto mb-4" />
+                      <p className="text-destructive font-semibold">{error}</p>
+                      <Button onClick={getDiscount} className="mt-4">Try Again</Button>
+                    </div>
                 ) : (
                   <>
                     <p className="text-lg text-muted-foreground">You've won a</p>
@@ -117,7 +127,7 @@ export default function DiscountGenerator() {
                   </>
                 )}
               </div>
-              {!isRevealed && (
+              {!isRevealed && !loading && !error &&(
                 <canvas
                   ref={canvasRef}
                   width="1280"
@@ -131,7 +141,7 @@ export default function DiscountGenerator() {
               )}
             </div>
              <div className="text-center mt-4">
-                <Button variant="link" onClick={revealAll} disabled={isRevealed || loading}>
+                <Button variant="link" onClick={revealAll} disabled={isRevealed || loading || !!error}>
                     {isRevealed ? "Offer Revealed!" : "Click to reveal instantly"}
                 </Button>
             </div>
