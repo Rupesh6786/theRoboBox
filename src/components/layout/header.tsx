@@ -1,4 +1,3 @@
-
 "use client";
 
 import { Menu, Search } from "lucide-react";
@@ -123,9 +122,9 @@ export default function Header() {
             <Image 
               src="/img/logo.png" 
               alt="Company Logo" 
-              width={120} 
-              height={50}
-              className="h-10 w-auto"
+              width={160} 
+              height={66}
+              className="h-16 w-auto"
             />
           </Link>
         </div>
