@@ -1,4 +1,4 @@
-import { Bot, Menu } from "lucide-react";
+import { Menu } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
@@ -17,9 +17,15 @@ export default function Header() {
       <div className="container flex h-14 max-w-screen-2xl items-center">
         <div className="mr-4 flex items-center">
           <Link href="/" className="mr-6 flex items-center space-x-2">
-            <Bot className="h-6 w-6 text-primary" />
+            <Image 
+              src="/img/logo.png" 
+              alt="Company Logo" 
+              width={40} 
+              height={40} 
+              className="rounded-full"
+            />
             <span className="font-bold sm:inline-block">
-              RoboBox Reimagined
+              RoboBox
             </span>
           </Link>
           <nav className="hidden gap-6 text-sm md:flex">
@@ -39,15 +45,6 @@ export default function Header() {
           <Button asChild>
             <Link href="/login">Login</Link>
           </Button>
-          <Link href="/">
-            <Image 
-              src="/img/logo.png" 
-              alt="Company Logo" 
-              width={40} 
-              height={40} 
-              className="rounded-full"
-            />
-          </Link>
           <Sheet>
             <SheetTrigger asChild>
               <Button variant="outline" size="icon" className="md:hidden">
