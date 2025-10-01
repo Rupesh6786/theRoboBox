@@ -1,12 +1,12 @@
 // Import the functions you need from the SDKs you need
-import { initializeApp, getApps, getApp } from "firebase/app";
+import { initializeApp, getApps, getApp, type FirebaseOptions } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getAnalytics, isSupported } from "firebase/analytics";
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
+const firebaseConfig: FirebaseOptions = {
   apiKey: "AIzaSyDdkhnfxSxSX0agcrLmE8lYNoG_CPPSZWU",
   authDomain: "robobox-thane.firebaseapp.com",
   projectId: "robobox-thane",
@@ -30,4 +30,4 @@ if (typeof window !== 'undefined') {
   });
 }
 
-export { app, auth, db, analytics };
+export { app, auth, db, analytics, firebaseConfig };

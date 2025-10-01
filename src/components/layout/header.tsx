@@ -1,11 +1,11 @@
 
 "use client";
 
-import { Menu, Search } from "lucide-react";
+import { Menu, Search, User } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetDescription } from "@/components/ui/sheet";
 import { Input } from "@/components/ui/input";
 import {
   DropdownMenu,
@@ -14,6 +14,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useState } from "react";
+import { useAuth } from "@/context/auth-context";
+import { ScrollArea } from "../ui/scroll-area";
 
 const navLinks = [
   {
@@ -50,8 +52,14 @@ const navLinks = [
 ];
 
 
-const NavLink = ({ link, isMobile }: { link: (typeof navLinks)[number]; isMobile?: boolean}) => {
+const NavLink = ({ link, isMobile, closeSheet }: { link: (typeof navLinks)[number]; isMobile?: boolean; closeSheet?: () => void}) => {
     const [open, setOpen] = useState(false);
+
+    const handleLinkClick = (isSubLink: boolean) => {
+      if (isMobile && closeSheet && isSubLink) {
+        closeSheet();
+      }
+    };
 
     if (link.subLinks) {
         if (isMobile) {
@@ -62,6 +70,7 @@ const NavLink = ({ link, isMobile }: { link: (typeof navLinks)[number]; isMobile
                   <Link
                     key={subLink.href}
                     href={subLink.href}
+                    onClick={() => handleLinkClick(true)}
                     className="pl-4 font-medium text-foreground/60 transition-colors hover:text-foreground/80"
                   >
                     {subLink.label}
@@ -101,6 +110,7 @@ const NavLink = ({ link, isMobile }: { link: (typeof navLinks)[number]; isMobile
         <Link
           key={link.href}
           href={link.href}
+          onClick={() => handleLinkClick(false)}
           className="font-medium text-foreground/60 transition-colors hover:text-foreground/80"
         >
           {link.label}
@@ -109,25 +119,29 @@ const NavLink = ({ link, isMobile }: { link: (typeof navLinks)[number]; isMobile
 
 }
 
-const renderNavLinks = (isMobile = false) => {
-  return navLinks.map((link) => <NavLink link={link} isMobile={isMobile} key={link.label ?? link.href} />);
-};
-
 
 export default function Header() {
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { user } = useAuth();
+
+  const closeMobileMenu = () => setMobileMenuOpen(false);
+
+  const renderNavLinks = (isMobile = false) => {
+    return navLinks.map((link) => <NavLink link={link} isMobile={isMobile} key={link.label ?? link.href} closeSheet={closeMobileMenu} />);
+  };
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-20 max-w-screen-2xl items-center">
+      <div className="container flex h-24 max-w-screen-2xl items-center">
         <div className="mr-4 flex items-center">
           <Link href="/" className="mr-6 flex items-center space-x-2">
             <Image
               src="/img/logo.png"
               alt="Company Logo"
-              width={160}
-              height={66}
-              className="h-16 w-auto"
+              width={180}
+              height={74}
+              className="h-20 w-auto"
             />
           </Link>
         </div>
@@ -155,23 +169,34 @@ export default function Header() {
               <Input type="search" placeholder="Search..." className="w-full rounded-lg bg-background pl-10 md:w-[200px] lg:w-[320px]" />
             </div>
           </div>
-          <Button asChild>
-            <Link href="/login">Login</Link>
-          </Button>
-          <Sheet>
+          {user ? (
+            <Button asChild>
+              <Link href="/account"><User className="mr-2"/> My Account</Link>
+            </Button>
+          ) : (
+            <Button asChild>
+              <Link href="/login">Login</Link>
+            </Button>
+          )}
+          <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
             <SheetTrigger asChild>
               <Button variant="outline" size="icon" className="md:hidden">
                 <Menu className="h-5 w-5" />
                 <span className="sr-only">Toggle Menu</span>
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-[300px] sm:w-[400px]">
-              <SheetHeader>
+            <SheetContent side="right" className="w-[300px] sm:w-[400px] flex flex-col">
+               <SheetHeader>
                 <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
+                <SheetDescription className="sr-only">
+                  Navigate the site using these links.
+                </SheetDescription>
               </SheetHeader>
-              <nav className="flex flex-col gap-6 px-4 pt-8 text-lg">
-                {renderNavLinks(true)}
-              </nav>
+              <ScrollArea className="flex-grow">
+                <nav className="flex flex-col gap-6 p-4 text-lg">
+                  {renderNavLinks(true)}
+                </nav>
+              </ScrollArea>
             </SheetContent>
           </Sheet>
         </div>
