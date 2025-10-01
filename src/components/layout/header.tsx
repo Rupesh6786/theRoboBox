@@ -6,16 +6,16 @@ import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetDescription } from "@/components/ui/sheet";
-import { Input } from "@/components/ui/input";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "@/context/auth-context";
 import { ScrollArea } from "../ui/scroll-area";
+import { SearchCommand } from "../search-command";
 
 const navLinks = [
   {
@@ -121,17 +121,30 @@ const NavLink = ({ link, isMobile, closeSheet }: { link: (typeof navLinks)[numbe
 
 
 export default function Header() {
-  const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
   const { user } = useAuth();
 
   const closeMobileMenu = () => setMobileMenuOpen(false);
+
+  useEffect(() => {
+    const down = (e: KeyboardEvent) => {
+      if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault();
+        setSearchOpen((open) => !open);
+      }
+    };
+    document.addEventListener("keydown", down);
+    return () => document.removeEventListener("keydown", down);
+  }, []);
 
   const renderNavLinks = (isMobile = false) => {
     return navLinks.map((link) => <NavLink link={link} isMobile={isMobile} key={link.label ?? link.href} closeSheet={closeMobileMenu} />);
   };
 
   return (
+    <>
+    <SearchCommand open={searchOpen} onOpenChange={setSearchOpen} />
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-24 max-w-screen-2xl items-center">
         <div className="mr-4 flex items-center">
@@ -157,17 +170,16 @@ export default function Header() {
           <div className="w-full flex-1 md:w-auto md:flex-none">
             <Button
               variant="outline"
-              className="md:hidden"
-              size="icon"
-              onClick={() => setMobileSearchOpen(!mobileSearchOpen)}
+              className="relative w-full justify-start text-sm text-muted-foreground sm:pr-12 md:w-40 lg:w-64"
+              onClick={() => setSearchOpen(true)}
             >
-              <Search className="h-4 w-4" />
-              <span className="sr-only">Search</span>
+              <Search className="h-4 w-4 mr-2" />
+              <span className="hidden lg:inline-flex">Search...</span>
+              <span className="inline-flex lg:hidden">Search...</span>
+              <kbd className="pointer-events-none absolute right-1.5 top-1/2 -translate-y-1/2 hidden h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100 md:flex">
+                <span className="text-xs">⌘</span>K
+              </kbd>
             </Button>
-            <div className="relative hidden md:block">
-              <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
-              <Input type="search" placeholder="Search..." className="w-full rounded-lg bg-background pl-10 md:w-[200px] lg:w-[320px]" />
-            </div>
           </div>
           {user ? (
             <Button asChild>
@@ -201,14 +213,7 @@ export default function Header() {
           </Sheet>
         </div>
       </div>
-      {mobileSearchOpen && (
-        <div className="container md:hidden pb-4">
-           <div className="relative">
-              <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
-              <Input type="search" placeholder="Search..." className="w-full rounded-lg bg-background pl-10" />
-            </div>
-        </div>
-      )}
     </header>
+    </>
   );
 }
