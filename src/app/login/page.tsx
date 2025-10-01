@@ -28,7 +28,6 @@ import { app } from "@/lib/firebase";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, Mail, Key, LogIn, UserPlus, Phone, MessageSquare } from "lucide-react";
-import { Separator } from "@/components/ui/separator";
 import Image from "next/image";
 
 declare global {
@@ -185,11 +184,11 @@ export default function LoginPage() {
             <CardContent className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="email"><Mail className="inline-block mr-2" />Email</Label>
-                <Input id="email" type="email" placeholder="m@example.com" value={email} onChange={(e) => setEmail(e.target.value)} disabled={loading} className="bg-secondary/30" />
+                <Input id="email" type="email" placeholder="m@example.com" value={email} onChange={(e) => setEmail(e.target.value)} disabled={loading} />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="password"><Key className="inline-block mr-2" />Password</Label>
-                <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} disabled={loading} className="bg-secondary/30" />
+                <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} disabled={loading} />
               </div>
               {authView === 'login' && (
                 <div className="text-right">
@@ -200,10 +199,15 @@ export default function LoginPage() {
                 {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 {authView === 'login' ? <><LogIn className="mr-2" /> Sign In</> : <><UserPlus className="mr-2" /> Create Account</>}
               </Button>
-              <div className="relative flex items-center py-2">
-                <div className="flex-grow border-t border-muted-foreground/30"></div>
-                <span className="flex-shrink mx-4 text-xs text-muted-foreground">OR</span>
-                <div className="flex-grow border-t border-muted-foreground/30"></div>
+              <div className="relative my-4">
+                <div className="absolute inset-0 flex items-center">
+                    <span className="w-full border-t" />
+                </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                    <span className="bg-card px-2 text-muted-foreground">
+                    Or continue with
+                    </span>
+                </div>
               </div>
               <div className="flex flex-col gap-2">
                  <Button variant="outline" className="w-full" onClick={handleGoogleSignIn} disabled={loading}>
