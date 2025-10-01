@@ -8,13 +8,15 @@ import { Button } from "../ui/button";
 
 export default function DiscountGenerator() {
   const [discount, setDiscount] = useState<DiscountCodeOutput | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isRevealed, setIsRevealed] = useState(false);
+  const [isInteractionStarted, setIsInteractionStarted] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const isDrawing = useRef(false);
 
   const getDiscount = useCallback(async () => {
+    if (loading || discount) return;
     setError(null);
     setLoading(true);
     try {
@@ -26,17 +28,20 @@ export default function DiscountGenerator() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [loading, discount]);
 
-  useEffect(() => {
-    getDiscount();
-  }, [getDiscount]);
-  
+  const handleInteraction = () => {
+    if (!isInteractionStarted) {
+      setIsInteractionStarted(true);
+      getDiscount();
+    }
+  };
+
   const getCanvasContext = () => canvasRef.current?.getContext("2d");
 
   useEffect(() => {
     const context = getCanvasContext();
-    if (context && !loading && !error) {
+    if (context) {
       context.fillStyle = "#e6e6fa"; // Lavender accent color
       context.fillRect(0, 0, context.canvas.width, context.canvas.height);
       context.fillStyle = "#4169E1"; // Royal blue primary color
@@ -45,9 +50,10 @@ export default function DiscountGenerator() {
       context.textBaseline = "middle";
       context.fillText("SCRATCH TO REVEAL", context.canvas.width / 2, context.canvas.height / 2);
     }
-  }, [loading, error]);
+  }, []);
 
   const scratch = (e: MouseEvent<HTMLCanvasElement>) => {
+    handleInteraction();
     if (!isDrawing.current || isRevealed) return;
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -79,8 +85,15 @@ export default function DiscountGenerator() {
   const stopDrawing = () => { isDrawing.current = false; checkReveal(); };
   
   const revealAll = () => {
+    handleInteraction();
+    if (loading || error) return;
     setIsRevealed(true);
   }
+
+  const tryAgain = () => {
+    setError(null);
+    getDiscount();
+  };
 
   return (
     <section id="discount" className="bg-background">
@@ -104,7 +117,7 @@ export default function DiscountGenerator() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="relative aspect-video w-full rounded-lg">
+            <div className="relative aspect-video w-full rounded-lg cursor-pointer" onClick={handleInteraction}>
               <div className="absolute inset-0 flex flex-col items-center justify-center bg-card rounded-lg border-2 border-dashed border-primary/50">
                 {loading ? (
                   <Loader2 className="h-12 w-12 animate-spin text-primary" />
@@ -112,9 +125,9 @@ export default function DiscountGenerator() {
                     <div className="text-center">
                       <AlertTriangle className="h-12 w-12 text-destructive mx-auto mb-4" />
                       <p className="text-destructive font-semibold">{error}</p>
-                      <Button onClick={getDiscount} className="mt-4">Try Again</Button>
+                      <Button onClick={tryAgain} className="mt-4">Try Again</Button>
                     </div>
-                ) : (
+                ) : discount ? (
                   <>
                     <p className="text-lg text-muted-foreground">You've won a</p>
                     <p className="text-6xl font-bold text-primary font-headline my-2">
@@ -125,9 +138,13 @@ export default function DiscountGenerator() {
                       {discount?.discountCode}
                     </p>
                   </>
+                ) : (
+                   <div className="text-center text-muted-foreground">
+                      <p>Scratch or click to reveal your prize!</p>
+                  </div>
                 )}
               </div>
-              {!isRevealed && !loading && !error &&(
+              {!isRevealed && (
                 <canvas
                   ref={canvasRef}
                   width="1280"
@@ -141,7 +158,7 @@ export default function DiscountGenerator() {
               )}
             </div>
              <div className="text-center mt-4">
-                <Button variant="link" onClick={revealAll} disabled={isRevealed || loading || !!error}>
+                <Button variant="link" onClick={revealAll} disabled={isRevealed || loading || !!error && !discount}>
                     {isRevealed ? "Offer Revealed!" : "Click to reveal instantly"}
                 </Button>
             </div>
