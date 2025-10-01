@@ -4,13 +4,95 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Input } from "@/components/ui/input";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const navLinks = [
-  { href: "#products", label: "Products" },
+  {
+    label: "Kits",
+    href: "#",
+    subLinks: [
+      { label: "RoboBox Kit", href: "/kits/robobox" },
+      { label: "Mechatronics Kits", href: "/kits/mechatronics" },
+      { label: "Blix Kits", href: "/kits/blix" },
+      { label: "Drone Kit", href: "/kits/drone" },
+    ],
+  },
+  {
+    label: "Workshop",
+    href: "#",
+    subLinks: [
+      { label: "Insight to Robotics", href: "/workshops/robotics-insight" },
+      { label: "All in one Masterclass", href: "/workshops/all-in-one" },
+      { label: "Master class (Scratch to Pro)", href: "/workshops/scratch-to-pro" },
+    ],
+  },
+  {
+    label: "Community",
+    href: "#",
+    subLinks: [
+        { label: "Games", href: "/community/games" },
+        { label: "Scholarship", href: "/community/scholarship" },
+        { label: "Make your Bot", href: "/community/make-your-bot" },
+    ]
+  },
+  { href: "/shop", label: "Shop" },
+  { href: "/career", label: "Career" },
   { href: "#about", label: "About" },
-  { href: "#register", label: "For Schools" },
-  { href: "#faq", label: "FAQ" },
 ];
+
+const renderNavLinks = (isMobile = false) => {
+  return navLinks.map((link) => {
+    if (link.subLinks) {
+      if (isMobile) {
+        return (
+          <div key={link.label} className="flex flex-col gap-2">
+            <h3 className="font-semibold text-foreground/80">{link.label}</h3>
+            {link.subLinks.map((subLink) => (
+              <Link
+                key={subLink.href}
+                href={subLink.href}
+                className="pl-4 font-medium text-foreground/60 transition-colors hover:text-foreground/80"
+              >
+                {subLink.label}
+              </Link>
+            ))}
+          </div>
+        )
+      }
+      return (
+        <DropdownMenu key={link.label}>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="font-medium text-foreground/60 transition-colors hover:text-foreground/80 hover:bg-transparent p-0">
+              {link.label}
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            {link.subLinks.map((subLink) => (
+              <DropdownMenuItem key={subLink.href} asChild>
+                <Link href={subLink.href}>{subLink.label}</Link>
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
+      );
+    }
+    return (
+      <Link
+        key={link.href}
+        href={link.href}
+        className="font-medium text-foreground/60 transition-colors hover:text-foreground/80"
+      >
+        {link.label}
+      </Link>
+    );
+  });
+};
+
 
 export default function Header() {
   return (
@@ -28,24 +110,16 @@ export default function Header() {
         </div>
 
         <div className="hidden md:flex flex-1 items-center justify-center">
-          <div className="relative w-full max-w-md">
-            <Input type="search" placeholder="Search..." className="pl-10" />
-            <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
-          </div>
+          <nav className="hidden gap-6 text-sm md:flex">
+             {renderNavLinks()}
+          </nav>
         </div>
 
         <div className="flex flex-1 items-center justify-end gap-4">
-           <nav className="hidden gap-6 text-sm md:flex">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="font-medium text-foreground/60 transition-colors hover:text-foreground/80"
-              >
-                {link.label}
-              </Link>
-            ))}
-          </nav>
+          <div className="relative w-full max-w-xs">
+            <Input type="search" placeholder="Search..." className="pl-10" />
+            <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
+          </div>
           <Button asChild>
             <Link href="/login">Login</Link>
           </Button>
@@ -57,20 +131,8 @@ export default function Header() {
               </Button>
             </SheetTrigger>
             <SheetContent side="right" className="w-[300px] sm:w-[400px]">
-              <div className="relative mt-6 w-full max-w-md">
-                <Input type="search" placeholder="Search..." className="pl-10" />
-                <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
-              </div>
               <nav className="flex flex-col gap-6 pt-8 text-lg">
-                {navLinks.map((link) => (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    className="font-medium text-foreground/60 transition-colors hover:text-foreground/80"
-                  >
-                    {link.label}
-                  </Link>
-                ))}
+                {renderNavLinks(true)}
               </nav>
             </SheetContent>
           </Sheet>
