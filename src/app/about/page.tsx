@@ -81,7 +81,7 @@ export default function AboutPage() {
             <div className="container mx-auto relative z-10">
                 <Bot className="mx-auto h-16 w-16 text-primary animate-pulse" />
                 <h1 className="mt-4 text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl font-headline">
-                    About RoboBox Reimagined
+                    About RoboBox
                 </h1>
                 <p className="mx-auto mt-4 max-w-3xl text-muted-foreground md:text-xl">
                     We're on a mission to democratize robotics education and inspire the next generation of innovators, creators, and problem-solvers.
@@ -99,7 +99,7 @@ export default function AboutPage() {
                   Our Mission: To Inspire & Empower
                 </h2>
                 <p className="mt-4 text-muted-foreground md:text-xl">
-                  RoboBox Reimagined was born from a simple yet powerful idea: learning should be as exciting as discovery itself. We believe that the future is built by those who can dream, design, and create. Our goal is to put the tools of creation into the hands of every aspiring engineer, artist, and scientist.
+                  RoboBox was born from a simple yet powerful idea: learning should be as exciting as discovery itself. We believe that the future is built by those who can dream, design, and create. Our goal is to put the tools of creation into the hands of every aspiring engineer, artist, and scientist.
                 </p>
                 <p className="mt-4 text-muted-foreground md:text-xl">
                     We are dedicated to creating a world where complex technologies like robotics and AI are not intimidating, but are instead intuitive and fun playgrounds for curiosity.
