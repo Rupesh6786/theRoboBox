@@ -30,11 +30,7 @@ export default function BookDemoModal() {
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <div className="flex justify-center items-center mb-4">
-              <div className="w-full text-center">
-                <h2 className="text-2xl font-bold tracking-tighter font-headline">Book A Demo</h2>
-              </div>
-          </div>
+          <DialogTitle className="text-center text-2xl font-bold tracking-tighter font-headline">Book A Demo</DialogTitle>
         </DialogHeader>
         <div className="flex flex-col gap-4">
             <Input type="text" placeholder="Name" />
