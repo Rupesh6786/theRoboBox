@@ -1,3 +1,4 @@
+
 "use client";
 
 import {
@@ -54,14 +55,12 @@ export default function AdminLayout({
   const auth = getAuth(app);
   const router = useRouter();
   const [user, setUser] = useState(auth.currentUser);
+  const ADMIN_UID = "jy39QM0BtDROwlkLPZvFFV4H8mk2";
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
+      if (user && user.uid === ADMIN_UID) {
         setUser(user);
-        // In a real app, you would check for admin role here
-        // e.g., using custom claims.
-        // For now, any logged in user can see the admin panel.
       } else {
         router.push("/login");
       }

@@ -104,7 +104,7 @@ export default function LoginPage() {
   const auth = getAuth(app);
   const router = useRouter();
   const { toast } = useToast();
-  const ADMIN_EMAIL = "admin@example.com"; // Replace with your admin's email
+  const ADMIN_UID = "jy39QM0BtDROwlkLPZvFFV4H8mk2";
 
   const recaptchaContainerRef = useRef<HTMLDivElement>(null);
 
@@ -133,7 +133,7 @@ export default function LoginPage() {
         setAuthView("login");
       } else {
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
-        if (!userCredential.user.emailVerified && userCredential.user.email !== ADMIN_EMAIL) {
+        if (!userCredential.user.emailVerified && userCredential.user.uid !== ADMIN_UID) {
            toast({
             title: "Email Not Verified",
             description: "Please verify your email before logging in.",
@@ -143,7 +143,7 @@ export default function LoginPage() {
           return;
         }
         toast({ title: "Login Successful" });
-        if (userCredential.user.email === ADMIN_EMAIL) {
+        if (userCredential.user.uid === ADMIN_UID) {
             router.push("/admin");
         } else {
             router.push("/account");
@@ -166,7 +166,7 @@ export default function LoginPage() {
     try {
       const result = await signInWithPopup(auth, provider);
       toast({ title: "Google Sign-In Successful" });
-      if (result.user.email === ADMIN_EMAIL) {
+      if (result.user.uid === ADMIN_UID) {
         router.push("/admin");
       } else {
         router.push("/account");
@@ -221,7 +221,7 @@ export default function LoginPage() {
     try {
       const result = await window.confirmationResult.confirm(otp);
       toast({ title: "Phone Sign-In Successful" });
-      if (result.user.email === ADMIN_EMAIL) { // This check might not be reliable for phone auth
+      if (result.user.uid === ADMIN_UID) {
         router.push("/admin");
       } else {
         router.push("/account");
@@ -365,16 +365,18 @@ export default function LoginPage() {
         
         { (authView === 'login' || authView === 'register') && (
             <CardFooter>
-                <p className="text-sm text-muted-foreground mx-auto">
-                    {authView === 'login' ? "Don't have an account?" : "Already have an account?"}
-                    <Button
-                    variant="link"
-                    className="pl-2"
-                    onClick={() => setAuthView(authView === 'login' ? 'register' : 'login')}
-                    >
-                    {authView === 'login' ? "Register" : "Login"}
-                    </Button>
-                </p>
+                <div className="flex items-center w-full">
+                    <p className="text-sm text-muted-foreground mx-auto">
+                        {authView === 'login' ? "Don't have an account?" : "Already have an account?"}
+                        <Button
+                        variant="link"
+                        className="pl-2"
+                        onClick={() => setAuthView(authView === 'login' ? 'register' : 'login')}
+                        >
+                        {authView === 'login' ? "Register" : "Login"}
+                        </Button>
+                    </p>
+                </div>
             </CardFooter>
         )}
       </Card>
