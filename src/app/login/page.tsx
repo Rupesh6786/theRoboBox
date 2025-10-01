@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, type KeyboardEvent } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -166,6 +166,12 @@ export default function LoginPage() {
     }
   };
 
+  const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      handlePasswordAuth();
+    }
+  };
+
   const handleGoogleSignIn = async () => {
     setLoading(true);
     const provider = new GoogleAuthProvider();
@@ -249,11 +255,11 @@ export default function LoginPage() {
             <CardContent className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="email"><Mail className="inline-block mr-2" />Email</Label>
-                <Input id="email" type="email" placeholder="m@example.com" value={email} onChange={(e) => setEmail(e.target.value)} disabled={loading} />
+                <Input id="email" type="email" placeholder="m@example.com" value={email} onChange={(e) => setEmail(e.target.value)} disabled={loading} onKeyDown={handleKeyDown}/>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="password"><Key className="inline-block mr-2" />Password</Label>
-                <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} disabled={loading} />
+                <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} disabled={loading} onKeyDown={handleKeyDown} />
                 {authView === 'register' && <PasswordStrengthIndicator password={password} />}
               </div>
               {authView === 'login' && (
