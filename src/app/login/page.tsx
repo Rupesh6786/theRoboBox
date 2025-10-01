@@ -196,26 +196,26 @@ export default function LoginPage() {
                   <Button variant="link" size="sm" onClick={() => setAuthView('forgot')}>Forgot Password?</Button>
                 </div>
               )}
-            </CardContent>
-            <CardFooter className="flex flex-col gap-4">
-              <Button onClick={handlePasswordAuth} className="w-full" disabled={loading} size="lg">
+               <Button onClick={handlePasswordAuth} className="w-full" disabled={loading} size="lg">
                 {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 {authView === 'login' ? <><LogIn className="mr-2" /> Sign In</> : <><UserPlus className="mr-2" /> Create Account</>}
               </Button>
-              <div className="relative w-full flex items-center my-2">
+              <div className="relative w-full flex items-center my-4">
                 <Separator className="flex-grow" />
                 <span className="mx-4 text-xs text-muted-foreground">OR</span>
                 <Separator className="flex-grow" />
               </div>
-               <Button variant="outline" className="w-full" onClick={handleGoogleSignIn} disabled={loading}>
-                 <svg className="mr-2 h-4 w-4" aria-hidden="true" focusable="false" data-prefix="fab" data-icon="google" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 488 512"><path fill="currentColor" d="M488 261.8C488 403.3 391.1 504 248 504 110.8 504 0 393.2 0 256S110.8 8 248 8c66.8 0 126 23.4 172.9 61.9l-79.9 67.9C291.2 110.4 221.2 102.3 167 121c-52.2 18.1-84 69.4-76.8 122.9 8.5 60.5 59.9 104.9 121.2 102.3 54.4-2.3 93.3-33.5 105.8-64.4H248V261.8h232.2z"></path></svg>
-                Sign in with Google
-              </Button>
-               <Button variant="outline" className="w-full" onClick={() => setAuthView('phone')} disabled={loading}>
-                 <Phone className="mr-2" />
-                Sign in with Phone
-              </Button>
-            </CardFooter>
+              <div className="flex flex-col gap-2">
+                 <Button variant="outline" className="w-full" onClick={handleGoogleSignIn} disabled={loading}>
+                   <svg className="mr-2 h-4 w-4" aria-hidden="true" focusable="false" data-prefix="fab" data-icon="google" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 488 512"><path fill="currentColor" d="M488 261.8C488 403.3 391.1 504 248 504 110.8 504 0 393.2 0 256S110.8 8 248 8c66.8 0 126 23.4 172.9 61.9l-79.9 67.9C291.2 110.4 221.2 102.3 167 121c-52.2 18.1-84 69.4-76.8 122.9 8.5 60.5 59.9 104.9 121.2 102.3 54.4-2.3 93.3-33.5 105.8-64.4H248V261.8h232.2z"></path></svg>
+                  Sign in with Google
+                </Button>
+                 <Button variant="outline" className="w-full" onClick={() => setAuthView('phone')} disabled={loading}>
+                   <Phone className="mr-2" />
+                  Sign in with Phone
+                </Button>
+              </div>
+            </CardContent>
           </>
         );
       case "forgot":
@@ -281,7 +281,8 @@ export default function LoginPage() {
           src="/img/humanoid-robot.png" 
           alt="Humanoid Robot"
           fill
-          className="object-cover animate-[pulse_10s_ease-in-out_infinite]"
+          style={{objectFit: "cover"}}
+          className="animate-[pulse_10s_ease-in-out_infinite]"
         />
         <div className="absolute inset-0 bg-gradient-to-br from-background via-transparent to-background"></div>
       </div>
@@ -308,3 +309,5 @@ export default function LoginPage() {
     </div>
   );
 }
+
+    
