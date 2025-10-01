@@ -70,8 +70,8 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background overflow-hidden">
-      <Card className="w-[450px] shadow-2xl relative">
+    <div className="flex min-h-screen items-center justify-center bg-background p-4 overflow-hidden">
+      <Card className="w-full max-w-md shadow-2xl relative">
         <div className="absolute -top-16 -left-16 w-32 h-32 text-primary/10 -z-10">
           <Bot className="w-full h-full animate-pulse" />
         </div>

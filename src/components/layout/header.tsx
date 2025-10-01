@@ -156,8 +156,19 @@ export default function Header() {
                 <span className="sr-only">Toggle Menu</span>
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-[300px] sm:w-[400px]">
-              <nav className="flex flex-col gap-6 pt-8 text-lg">
+            <SheetContent side="left" className="w-[300px] sm:w-[400px]">
+              <div className="p-4">
+                <Link href="/" className="mb-8 flex items-center space-x-2">
+                  <Image 
+                    src="/img/logo.png" 
+                    alt="Company Logo" 
+                    width={160} 
+                    height={66}
+                    className="h-12 w-auto"
+                  />
+                </Link>
+              </div>
+              <nav className="flex flex-col gap-6 px-4 text-lg">
                 {renderNavLinks(true)}
               </nav>
             </SheetContent>

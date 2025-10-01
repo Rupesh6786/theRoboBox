@@ -78,10 +78,10 @@ export default function HeroSlider() {
                 )}
                 <div className="absolute inset-0 bg-black/50" />
                 <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-white p-4">
-                  <h1 className="text-4xl md:text-6xl font-headline font-bold mb-4 drop-shadow-lg">
+                  <h1 className="text-4xl md:text-6xl font-headline font-bold mb-4 drop-shadow-lg text-center">
                     {slide.title}
                   </h1>
-                  <p className="text-lg md:text-2xl mb-8 max-w-2xl drop-shadow-md">
+                  <p className="text-lg md:text-2xl mb-8 max-w-2xl drop-shadow-md text-center">
                     {slide.subtitle}
                   </p>
                   <Button asChild size="lg" className="font-bold text-lg">
