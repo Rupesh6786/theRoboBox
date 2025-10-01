@@ -16,7 +16,7 @@ export default function Header() {
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-14 max-w-screen-2xl items-center">
         <div className="mr-4 flex items-center">
-          <Link href="/" className="mr-6 flex items-center space-x-2">
+          <Link href="/" className="mr-6 flex items-center">
             <Image 
               src="/img/logo.png" 
               alt="Company Logo" 
@@ -24,9 +24,6 @@ export default function Header() {
               height={40} 
               className="rounded-full"
             />
-            <span className="font-bold sm:inline-block">
-              RoboBox
-            </span>
           </Link>
           <nav className="hidden gap-6 text-sm md:flex">
             {navLinks.map((link) => (
