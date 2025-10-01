@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Menu, Search } from "lucide-react";
@@ -117,8 +118,8 @@ export default function Header() {
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-20 max-w-screen-2xl items-center">
-        <div className="flex items-center">
-          <Link href="/" className="mr-6 flex items-center">
+        <div className="mr-4 hidden md:flex">
+          <Link href="/" className="mr-6 flex items-center space-x-2">
             <Image 
               src="/img/logo.png" 
               alt="Company Logo" 
@@ -129,16 +130,22 @@ export default function Header() {
           </Link>
         </div>
 
-        <div className="hidden md:flex flex-1 items-center justify-center">
-          <nav className="hidden gap-6 text-sm md:flex">
+        <div className="flex-1 items-center justify-center hidden md:flex">
+          <nav className="flex items-center gap-6 text-sm">
              {renderNavLinks()}
           </nav>
         </div>
 
-        <div className="flex flex-1 items-center justify-end gap-4">
-          <div className="relative w-full max-w-xs hidden sm:block">
-            <Input type="search" placeholder="Search..." className="pl-10" />
-            <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
+        <div className="flex flex-1 items-center justify-end space-x-2">
+          <div className="w-full flex-1 md:w-auto md:flex-none">
+            <Button variant="outline" className="md:hidden" size="icon">
+              <Search className="h-4 w-4" />
+              <span className="sr-only">Search</span>
+            </Button>
+            <div className="relative hidden md:block">
+              <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
+              <Input type="search" placeholder="Search..." className="w-full rounded-lg bg-background pl-10 md:w-[200px] lg:w-[320px]" />
+            </div>
           </div>
           <Button asChild>
             <Link href="/login">Login</Link>
