@@ -21,6 +21,7 @@ import {
   Settings,
   LogOut,
   ChevronDown,
+  Bot
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -55,6 +56,7 @@ export default function AdminLayout({
   const auth = getAuth(app);
   const router = useRouter();
   const [user, setUser] = useState(auth.currentUser);
+  const [loading, setLoading] = useState(true);
   const ADMIN_UID = "jy39QM0BtDROwlkLPZvFFV4H8mk2";
 
   useEffect(() => {
@@ -64,6 +66,7 @@ export default function AdminLayout({
       } else {
         router.push("/login");
       }
+      setLoading(false);
     });
     return () => unsubscribe();
   }, [auth, router]);
@@ -77,13 +80,18 @@ export default function AdminLayout({
     return email ? email.substring(0, 2).toUpperCase() : "AD";
   };
 
-  if (!user) {
+  if (loading) {
     return (
-      <div className="flex h-screen items-center justify-center">
-        Loading...
+      <div className="flex h-screen items-center justify-center bg-background">
+        <Bot className="h-16 w-16 animate-spin text-primary" />
       </div>
     );
   }
+  
+  if (!user) {
+    return null; // The useEffect hook will handle the redirect.
+  }
+
 
   return (
     <SidebarProvider>
@@ -158,3 +166,5 @@ export default function AdminLayout({
     </SidebarProvider>
   );
 }
+
+    

@@ -1,21 +1,20 @@
+
 rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-    // The admin user has god-mode access to all data.
-    function isAdmin() {
-      return request.auth.uid == 'jy39QM0BtDROwlkLPZvFFV4H8mk2';
-    }
-
-    // Allow admin to read and write all documents
+    
+    // The admin user has full read/write access to all collections.
     match /{document=**} {
-      allow read, write: if isAdmin();
+      allow read, write: if request.auth.uid == 'jy39QM0BtDROwlkLPZvFFV4H8mk2';
     }
 
-    // Example rule for a 'users' collection:
-    // Allow users to read and write to their own document.
-    match /users/{userId} {
-      allow read, write: if request.auth.uid == userId;
+    // Default-deny all other users until more specific rules are added.
+    // This is a secure starting point.
+    match /{document=**} {
+      allow read, write: if false;
     }
   }
 }
+
+    

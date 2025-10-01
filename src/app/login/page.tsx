@@ -22,7 +22,8 @@ import {
   sendPasswordResetEmail,
   sendEmailVerification,
   RecaptchaVerifier,
-  signInWithPhoneNumber
+  signInWithPhoneNumber,
+  type UserCredential,
 } from "firebase/auth";
 import { app } from "@/lib/firebase";
 import { useRouter } from "next/navigation";
@@ -119,6 +120,13 @@ export default function LoginPage() {
     }
   }, [authView, auth]);
 
+  const handleRedirect = (userCredential: UserCredential) => {
+    if (userCredential.user.uid === ADMIN_UID) {
+      router.push("/admin");
+    } else {
+      router.push("/account");
+    }
+  }
 
   const handlePasswordAuth = async () => {
     setLoading(true);
@@ -143,11 +151,7 @@ export default function LoginPage() {
           return;
         }
         toast({ title: "Login Successful" });
-        if (userCredential.user.uid === ADMIN_UID) {
-            router.push("/admin");
-        } else {
-            router.push("/account");
-        }
+        handleRedirect(userCredential);
       }
     } catch (error: any) {
       toast({
@@ -166,11 +170,7 @@ export default function LoginPage() {
     try {
       const result = await signInWithPopup(auth, provider);
       toast({ title: "Google Sign-In Successful" });
-      if (result.user.uid === ADMIN_UID) {
-        router.push("/admin");
-      } else {
-        router.push("/account");
-      }
+      handleRedirect(result);
     } catch (error: any) {
       toast({
         title: "Google Sign-In Failed",
@@ -221,11 +221,7 @@ export default function LoginPage() {
     try {
       const result = await window.confirmationResult.confirm(otp);
       toast({ title: "Phone Sign-In Successful" });
-      if (result.user.uid === ADMIN_UID) {
-        router.push("/admin");
-      } else {
-        router.push("/account");
-      }
+      handleRedirect(result);
     } catch (error: any) {
       toast({ title: "Invalid OTP", description: "Please check the code and try again.", variant: "destructive" });
     } finally {
@@ -383,3 +379,5 @@ export default function LoginPage() {
     </div>
   );
 }
+
+    
