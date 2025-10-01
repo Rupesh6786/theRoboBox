@@ -27,8 +27,9 @@ import {
 import { app } from "@/lib/firebase";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, Mail, Key, LogIn, UserPlus, Phone, MessageSquare } from "lucide-react";
+import { Loader2, Mail, Key, LogIn, UserPlus, Phone, MessageSquare, CheckCircle, XCircle } from "lucide-react";
 import Image from "next/image";
+import { Progress } from "@/components/ui/progress";
 
 declare global {
   interface Window {
@@ -36,6 +37,59 @@ declare global {
     confirmationResult?: any;
   }
 }
+
+const PasswordStrengthIndicator = ({ password }: { password: string }) => {
+  const [strength, setStrength] = useState({
+    length: false,
+    lowercase: false,
+    uppercase: false,
+    number: false,
+    special: false,
+  });
+
+  const [strengthValue, setStrengthValue] = useState(0);
+
+  useEffect(() => {
+    const newStrength = {
+      length: password.length >= 8,
+      lowercase: /[a-z]/.test(password),
+      uppercase: /[A-Z]/.test(password),
+      number: /[0-9]/.test(password),
+      special: /[^A-Za-z0-9]/.test(password),
+    };
+    setStrength(newStrength);
+    setStrengthValue(Object.values(newStrength).filter(Boolean).length * 20);
+  }, [password]);
+  
+  if (!password) return null;
+
+  const strengthColor = () => {
+    if (strengthValue < 40) return "bg-destructive";
+    if (strengthValue < 80) return "bg-yellow-500";
+    return "bg-green-500";
+  }
+
+  const CriteriaItem = ({ met, text }: { met: boolean; text: string }) => (
+    <div className={`flex items-center text-sm ${met ? 'text-green-500' : 'text-muted-foreground'}`}>
+      {met ? <CheckCircle className="w-4 h-4 mr-2" /> : <XCircle className="w-4 h-4 mr-2" />}
+      <span>{text}</span>
+    </div>
+  );
+
+  return (
+    <div className="space-y-2 mt-2">
+      <Progress value={strengthValue} className={`h-2 [&>div]:${strengthColor()}`} />
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1">
+        <CriteriaItem met={strength.length} text="At least 8 characters" />
+        <CriteriaItem met={strength.lowercase} text="A lowercase letter" />
+        <CriteriaItem met={strength.uppercase} text="An uppercase letter" />
+        <CriteriaItem met={strength.number} text="A number" />
+        <CriteriaItem met={strength.special} text="A special character" />
+      </div>
+    </div>
+  );
+};
+
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -189,6 +243,7 @@ export default function LoginPage() {
               <div className="space-y-2">
                 <Label htmlFor="password"><Key className="inline-block mr-2" />Password</Label>
                 <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} disabled={loading} />
+                {authView === 'register' && <PasswordStrengthIndicator password={password} />}
               </div>
               {authView === 'login' && (
                 <div className="text-right">
