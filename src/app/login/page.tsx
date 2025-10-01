@@ -174,7 +174,7 @@ export default function LoginPage() {
         return (
           <>
             <CardHeader className="text-center">
-              <Image src="/img/logo.png" alt="Logo" width={180} height={74} className="mx-auto mb-4 h-20 w-auto" />
+              <Image src="/img/logofavicon.ico" alt="Logo" width={180} height={74} className="mx-auto mb-4 h-20 w-auto" />
               <CardTitle className="text-3xl font-bold font-headline">
                 {authView === 'login' ? "Welcome Back" : "Create an Account"}
               </CardTitle>
