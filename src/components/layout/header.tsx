@@ -1,8 +1,9 @@
-import { Menu } from "lucide-react";
+import { Menu, Search } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Input } from "@/components/ui/input";
 
 const navLinks = [
   { href: "#products", label: "Products" },
@@ -17,16 +18,24 @@ export default function Header() {
       <div className="container flex h-20 max-w-screen-2xl items-center">
         <div className="mr-4 flex items-center">
           <Link href="/" className="mr-6 flex items-center">
-            <div className="bg-primary p-1 rounded-md">
-              <Image 
-                src="/img/logo.png" 
-                alt="Company Logo" 
-                width={50} 
-                height={50}
-              />
-            </div>
+            <Image 
+              src="/img/logo.png" 
+              alt="Company Logo" 
+              width={120} 
+              height={50}
+            />
           </Link>
-          <nav className="hidden gap-6 text-sm md:flex">
+        </div>
+
+        <div className="hidden md:flex flex-1 items-center justify-center">
+          <div className="relative w-full max-w-md">
+            <Input type="search" placeholder="Search..." className="pl-10" />
+            <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
+          </div>
+        </div>
+
+        <div className="flex flex-1 items-center justify-end gap-4">
+           <nav className="hidden gap-6 text-sm md:flex">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
@@ -37,9 +46,6 @@ export default function Header() {
               </Link>
             ))}
           </nav>
-        </div>
-
-        <div className="flex flex-1 items-center justify-end gap-4">
           <Button asChild>
             <Link href="/login">Login</Link>
           </Button>
@@ -51,6 +57,10 @@ export default function Header() {
               </Button>
             </SheetTrigger>
             <SheetContent side="right" className="w-[300px] sm:w-[400px]">
+              <div className="relative mt-6 w-full max-w-md">
+                <Input type="search" placeholder="Search..." className="pl-10" />
+                <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
+              </div>
               <nav className="flex flex-col gap-6 pt-8 text-lg">
                 {navLinks.map((link) => (
                   <Link
