@@ -1,4 +1,3 @@
-
 "use client";
 
 import { Menu, Search } from "lucide-react";
@@ -110,7 +109,7 @@ const NavLink = ({ link, isMobile }: { link: (typeof navLinks)[number]; isMobile
 }
 
 const renderNavLinks = (isMobile = false) => {
-  return navLinks.map((link) => <NavLink link={link} isMobile={isMobile} key={link.label} />);
+  return navLinks.map((link) => <NavLink link={link} isMobile={isMobile} key={link.label ?? link.href} />);
 };
 
 
@@ -125,6 +124,7 @@ export default function Header() {
               alt="Company Logo" 
               width={120} 
               height={50}
+              className="h-10 w-auto"
             />
           </Link>
         </div>
