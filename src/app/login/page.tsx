@@ -200,10 +200,10 @@ export default function LoginPage() {
                 {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 {authView === 'login' ? <><LogIn className="mr-2" /> Sign In</> : <><UserPlus className="mr-2" /> Create Account</>}
               </Button>
-              <div className="relative w-full flex items-center my-4">
-                <Separator className="flex-grow" />
-                <span className="mx-4 text-xs text-muted-foreground">OR</span>
-                <Separator className="flex-grow" />
+              <div className="relative flex items-center py-2">
+                <div className="flex-grow border-t border-muted-foreground/30"></div>
+                <span className="flex-shrink mx-4 text-xs text-muted-foreground">OR</span>
+                <div className="flex-grow border-t border-muted-foreground/30"></div>
               </div>
               <div className="flex flex-col gap-2">
                  <Button variant="outline" className="w-full" onClick={handleGoogleSignIn} disabled={loading}>
@@ -309,3 +309,5 @@ export default function LoginPage() {
     </div>
   );
 }
+
+    
