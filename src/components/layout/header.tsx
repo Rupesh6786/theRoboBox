@@ -1,3 +1,6 @@
+
+"use client";
+
 import { Menu, Search } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
@@ -10,6 +13,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useState } from "react";
 
 const navLinks = [
   {
@@ -45,52 +49,68 @@ const navLinks = [
   { href: "#about", label: "About" },
 ];
 
-const renderNavLinks = (isMobile = false) => {
-  return navLinks.map((link) => {
+
+const NavLink = ({ link, isMobile }: { link: (typeof navLinks)[number]; isMobile?: boolean}) => {
+    const [open, setOpen] = useState(false);
+
     if (link.subLinks) {
-      if (isMobile) {
+        if (isMobile) {
+            return (
+              <div key={link.label} className="flex flex-col gap-2">
+                <h3 className="font-semibold text-foreground/80">{link.label}</h3>
+                {link.subLinks.map((subLink) => (
+                  <Link
+                    key={subLink.href}
+                    href={subLink.href}
+                    className="pl-4 font-medium text-foreground/60 transition-colors hover:text-foreground/80"
+                  >
+                    {subLink.label}
+                  </Link>
+                ))}
+              </div>
+            )
+        }
         return (
-          <div key={link.label} className="flex flex-col gap-2">
-            <h3 className="font-semibold text-foreground/80">{link.label}</h3>
-            {link.subLinks.map((subLink) => (
-              <Link
-                key={subLink.href}
-                href={subLink.href}
-                className="pl-4 font-medium text-foreground/60 transition-colors hover:text-foreground/80"
+            <DropdownMenu open={open} onOpenChange={setOpen}>
+              <DropdownMenuTrigger asChild>
+                <div 
+                  className="py-2"
+                  onMouseEnter={() => setOpen(true)} 
+                  onMouseLeave={() => setOpen(false)}
+                >
+                    <Button variant="ghost" className="font-medium text-foreground/60 transition-colors hover:text-foreground/80 hover:bg-transparent p-0 h-auto">
+                      {link.label}
+                    </Button>
+                </div>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent 
+                onMouseEnter={() => setOpen(true)} 
+                onMouseLeave={() => setOpen(false)}
               >
-                {subLink.label}
-              </Link>
-            ))}
-          </div>
-        )
-      }
-      return (
-        <DropdownMenu key={link.label}>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="font-medium text-foreground/60 transition-colors hover:text-foreground/80 hover:bg-transparent p-0 h-auto">
-              {link.label}
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent>
-            {link.subLinks.map((subLink) => (
-              <DropdownMenuItem key={subLink.href} asChild>
-                <Link href={subLink.href}>{subLink.label}</Link>
-              </DropdownMenuItem>
-            ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
-      );
+                {link.subLinks.map((subLink) => (
+                  <DropdownMenuItem key={subLink.href} asChild>
+                    <Link href={subLink.href}>{subLink.label}</Link>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+        );
     }
+
     return (
-      <Link
-        key={link.href}
-        href={link.href}
-        className="font-medium text-foreground/60 transition-colors hover:text-foreground/80"
-      >
-        {link.label}
-      </Link>
-    );
-  });
+        <Link
+          key={link.href}
+          href={link.href}
+          className="font-medium text-foreground/60 transition-colors hover:text-foreground/80"
+        >
+          {link.label}
+        </Link>
+      );
+
+}
+
+const renderNavLinks = (isMobile = false) => {
+  return navLinks.map((link) => <NavLink link={link} isMobile={isMobile} key={link.label} />);
 };
 
 
