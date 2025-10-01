@@ -73,7 +73,7 @@ export default function AdminLayout({
 
   const handleLogout = async () => {
     await signOut(auth);
-    router.push("/login");
+    router.push("/");
   };
 
   const getInitials = (email: string | null | undefined) => {
@@ -118,15 +118,6 @@ export default function AdminLayout({
                 </SidebarMenuButton>
               </SidebarMenuItem>
             ))}
-             <SidebarMenuItem>
-                <SidebarMenuButton
-                  onClick={handleLogout}
-                  tooltip={{ children: "Logout", side: "right" }}
-                >
-                  <LogOut />
-                  <span>Logout</span>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
           </SidebarMenu>
         </SidebarContent>
         <SidebarFooter>
