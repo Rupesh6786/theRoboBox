@@ -27,7 +27,7 @@ import {
 import { app } from "@/lib/firebase";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, Bot, Mail, Key, LogIn, UserPlus, Phone, MessageSquare, Cog } from "lucide-react";
+import { Loader2, Mail, Key, LogIn, UserPlus, Phone, MessageSquare } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import Image from "next/image";
 
@@ -276,12 +276,16 @@ export default function LoginPage() {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background p-4 overflow-hidden relative">
-        <Bot className="absolute top-1/4 left-1/4 w-32 h-32 text-primary/10 -z-0 animate-[spin_20s_linear_infinite]" />
-        <Cog className="absolute bottom-1/4 right-1/4 w-24 h-24 text-primary/10 -z-0 animate-[spin_15s_linear_infinite_reverse]" />
-        <Bot className="absolute top-10 right-20 w-16 h-16 text-primary/10 -z-0 animate-[bounce_8s_ease-in-out_infinite]" />
-        <Cog className="absolute bottom-1/2 left-10 w-12 h-12 text-primary/10 -z-0 animate-[spin_12s_linear_infinite]" />
-        <Bot className="absolute bottom-10 right-1/2 w-20 h-20 text-primary/10 -z-0 animate-[pulse_5s_ease-in-out_infinite]" />
-
+      <div className="absolute inset-0 z-0 opacity-20">
+        <Image 
+          src="/img/humanoid-robot.png" 
+          alt="Humanoid Robot"
+          fill
+          className="object-cover animate-[pulse_10s_ease-in-out_infinite]"
+        />
+        <div className="absolute inset-0 bg-gradient-to-br from-background via-transparent to-background"></div>
+      </div>
+      
       <Card className="w-full max-w-md shadow-2xl z-10 bg-card/80 backdrop-blur-sm">
         
         {renderForm()}
@@ -304,5 +308,3 @@ export default function LoginPage() {
     </div>
   );
 }
-
-    
