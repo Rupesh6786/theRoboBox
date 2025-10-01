@@ -176,9 +176,6 @@ export default function Header() {
               <Search className="h-4 w-4 mr-2" />
               <span className="hidden lg:inline-flex">Search...</span>
               <span className="inline-flex lg:hidden">Search...</span>
-              <kbd className="pointer-events-none absolute right-1.5 top-1/2 -translate-y-1/2 hidden h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100 md:flex">
-                <span className="text-xs">⌘</span>K
-              </kbd>
             </Button>
           </div>
           {user ? (
