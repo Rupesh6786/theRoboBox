@@ -1,28 +1,21 @@
-
 rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-    
-    // Function to check if the user is the admin
+    // The admin user has god-mode access to all data.
     function isAdmin() {
       return request.auth.uid == 'jy39QM0BtDROwlkLPZvFFV4H8mk2';
     }
 
-    // By default, no one can read or write to any document.
-    // Specific rules below will grant access.
-    match /{document=**} {
-      allow read, write: if false;
-    }
-
-    // Allow admin to read and write any document in the database
+    // Allow admin to read and write all documents
     match /{document=**} {
       allow read, write: if isAdmin();
     }
 
-    // Allow authenticated users to read and write their own user profile data
+    // Example rule for a 'users' collection:
+    // Allow users to read and write to their own document.
     match /users/{userId} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
+      allow read, write: if request.auth.uid == userId;
     }
   }
 }
