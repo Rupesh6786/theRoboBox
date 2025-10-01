@@ -1,5 +1,6 @@
 import { Bot, Menu } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
@@ -34,10 +35,19 @@ export default function Header() {
           </nav>
         </div>
 
-        <div className="flex flex-1 items-center justify-end gap-2">
+        <div className="flex flex-1 items-center justify-end gap-4">
           <Button asChild>
             <Link href="/login">Login</Link>
           </Button>
+          <Link href="/">
+            <Image 
+              src="/img/logo.png" 
+              alt="Company Logo" 
+              width={40} 
+              height={40} 
+              className="rounded-full"
+            />
+          </Link>
           <Sheet>
             <SheetTrigger asChild>
               <Button variant="outline" size="icon" className="md:hidden">
