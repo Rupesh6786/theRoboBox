@@ -1,3 +1,4 @@
+
 "use client";
 
 import Image from "next/image";
@@ -11,8 +12,7 @@ import {
 } from "@/components/ui/carousel";
 import { Button } from "@/components/ui/button";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
-import { useEffect, useRef } from "react";
-import useEmblaCarousel from "embla-carousel-react";
+import { useRef } from "react";
 import Autoplay from "embla-carousel-autoplay";
 
 const heroSlides = [
@@ -41,7 +41,7 @@ const heroSlides = [
 
 export default function HeroSlider() {
   const plugin = useRef(
-    Autoplay({ delay: 5000, stopOnInteraction: true })
+    Autoplay({ delay: 5000, stopOnInteraction: false })
   );
 
   return (
@@ -50,8 +50,6 @@ export default function HeroSlider() {
         className="w-full"
         opts={{ loop: true }}
         plugins={[plugin.current]}
-        onMouseEnter={plugin.current.stop}
-        onMouseLeave={plugin.current.reset}
       >
         <CarouselContent>
           {heroSlides.map((slide, index) => (
