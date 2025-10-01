@@ -27,8 +27,9 @@ import {
 import { app } from "@/lib/firebase";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, Bot, Mail, Key, LogIn, UserPlus, Phone, MessageSquare } from "lucide-react";
+import { Loader2, Bot, Mail, Key, LogIn, UserPlus, Phone, MessageSquare, Cog } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
+import Image from "next/image";
 
 declare global {
   interface Window {
@@ -173,9 +174,7 @@ export default function LoginPage() {
         return (
           <>
             <CardHeader className="text-center">
-              <div className="mx-auto bg-primary rounded-full p-4 w-fit mb-4">
-                <Bot className="w-10 h-10 text-primary-foreground" />
-              </div>
+              <Image src="/img/logo.png" alt="Logo" width={180} height={74} className="mx-auto mb-4 h-20 w-auto" />
               <CardTitle className="text-3xl font-bold font-headline">
                 {authView === 'login' ? "Welcome Back" : "Create an Account"}
               </CardTitle>
@@ -276,14 +275,14 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background p-4 overflow-hidden">
-      <Card className="w-full max-w-md shadow-2xl relative">
-        <div className="absolute -top-16 -left-16 w-32 h-32 text-primary/10 -z-10">
-          <Bot className="w-full h-full animate-pulse" />
-        </div>
-        <div className="absolute -bottom-12 -right-12 w-24 h-24 text-primary/10 -z-10">
-          <Bot className="w-full h-full animate-bounce" />
-        </div>
+    <div className="flex min-h-screen items-center justify-center bg-background p-4 overflow-hidden relative">
+        <Bot className="absolute top-1/4 left-1/4 w-32 h-32 text-primary/10 -z-0 animate-[spin_20s_linear_infinite]" />
+        <Cog className="absolute bottom-1/4 right-1/4 w-24 h-24 text-primary/10 -z-0 animate-[spin_15s_linear_infinite_reverse]" />
+        <Bot className="absolute top-10 right-20 w-16 h-16 text-primary/10 -z-0 animate-[bounce_8s_ease-in-out_infinite]" />
+        <Cog className="absolute bottom-1/2 left-10 w-12 h-12 text-primary/10 -z-0 animate-[spin_12s_linear_infinite]" />
+        <Bot className="absolute bottom-10 right-1/2 w-20 h-20 text-primary/10 -z-0 animate-[pulse_5s_ease-in-out_infinite]" />
+
+      <Card className="w-full max-w-md shadow-2xl z-10 bg-card/80 backdrop-blur-sm">
         
         {renderForm()}
         
@@ -305,3 +304,5 @@ export default function LoginPage() {
     </div>
   );
 }
+
+    
