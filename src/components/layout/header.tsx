@@ -48,7 +48,7 @@ const navLinks = [
   },
   { href: "/shop", label: "Shop" },
   { href: "/career", label: "Career" },
-  { href: "#about", label: "About" },
+  { href: "/about", label: "About" },
 ];
 
 
