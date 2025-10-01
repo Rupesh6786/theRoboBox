@@ -4,8 +4,11 @@ import './globals.css';
 import { AuthProvider } from '@/context/auth-context';
 
 export const metadata: Metadata = {
-  title: 'RoboBox Reimagined',
+  title: 'The RoboBox',
   description: 'Exploring the future of robotics education.',
+  icons: {
+    icon: '/img/logofavicon.ico',
+  },
 };
 
 export default function RootLayout({
