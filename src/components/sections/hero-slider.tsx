@@ -11,8 +11,9 @@ import {
 } from "@/components/ui/carousel";
 import { Button } from "@/components/ui/button";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import useEmblaCarousel from "embla-carousel-react";
+import Autoplay from "embla-carousel-autoplay";
 
 const heroSlides = [
   {
@@ -39,28 +40,18 @@ const heroSlides = [
 ];
 
 export default function HeroSlider() {
-  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true }, []);
+  const plugin = useRef(
+    Autoplay({ delay: 5000, stopOnInteraction: true })
+  );
 
-  useEffect(() => {
-    if (!emblaApi) return;
-
-    const timer = setInterval(() => {
-      if (emblaApi.canScrollNext()) {
-        emblaApi.scrollNext();
-      } else {
-        emblaApi.scrollTo(0);
-      }
-    }, 5000); // Change slide every 5 seconds
-
-    return () => clearInterval(timer);
-  }, [emblaApi]);
-  
   return (
     <section className="w-full pt-0">
       <Carousel
         className="w-full"
         opts={{ loop: true }}
-        ref={emblaRef}
+        plugins={[plugin.current]}
+        onMouseEnter={plugin.current.stop}
+        onMouseLeave={plugin.current.reset}
       >
         <CarouselContent>
           {heroSlides.map((slide, index) => (
