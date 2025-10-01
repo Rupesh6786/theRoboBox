@@ -104,6 +104,7 @@ export default function LoginPage() {
   const auth = getAuth(app);
   const router = useRouter();
   const { toast } = useToast();
+  const ADMIN_EMAIL = "admin@example.com"; // Replace with your admin's email
 
   const recaptchaContainerRef = useRef<HTMLDivElement>(null);
 
@@ -132,7 +133,7 @@ export default function LoginPage() {
         setAuthView("login");
       } else {
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
-        if (!userCredential.user.emailVerified) {
+        if (!userCredential.user.emailVerified && userCredential.user.email !== ADMIN_EMAIL) {
            toast({
             title: "Email Not Verified",
             description: "Please verify your email before logging in.",
@@ -142,7 +143,11 @@ export default function LoginPage() {
           return;
         }
         toast({ title: "Login Successful" });
-        router.push(userCredential.user.email === "admin@example.com" ? "/admin" : "/account");
+        if (userCredential.user.email === ADMIN_EMAIL) {
+            router.push("/admin");
+        } else {
+            router.push("/account");
+        }
       }
     } catch (error: any) {
       toast({
@@ -161,7 +166,11 @@ export default function LoginPage() {
     try {
       const result = await signInWithPopup(auth, provider);
       toast({ title: "Google Sign-In Successful" });
-      router.push(result.user.email === "admin@example.com" ? "/admin" : "/account");
+      if (result.user.email === ADMIN_EMAIL) {
+        router.push("/admin");
+      } else {
+        router.push("/account");
+      }
     } catch (error: any) {
       toast({
         title: "Google Sign-In Failed",
@@ -212,7 +221,11 @@ export default function LoginPage() {
     try {
       const result = await window.confirmationResult.confirm(otp);
       toast({ title: "Phone Sign-In Successful" });
-      router.push(result.user.email === "admin@example.com" ? "/account" : "/account");
+      if (result.user.email === ADMIN_EMAIL) { // This check might not be reliable for phone auth
+        router.push("/admin");
+      } else {
+        router.push("/account");
+      }
     } catch (error: any) {
       toast({ title: "Invalid OTP", description: "Please check the code and try again.", variant: "destructive" });
     } finally {
@@ -368,5 +381,3 @@ export default function LoginPage() {
     </div>
   );
 }
-
-    

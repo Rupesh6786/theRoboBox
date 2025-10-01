@@ -1,0 +1,25 @@
+{
+  "rules": {
+    "users": {
+      "$uid": {
+        // Logged-in users can read/write their own data
+        ".read": "auth != null && auth.uid == $uid",
+        ".write": "auth != null && auth.uid == $uid"
+      }
+    },
+    // Admin-only access for other collections
+    "products": {
+      ".read": "auth != null && auth.uid == 'ADMIN_UID_REPLACE_ME'",
+      ".write": "auth != null && auth.uid == 'ADMIN_UID_REPLACE_ME'"
+    },
+    "kits": {
+      ".read": "auth != null && auth.uid == 'ADMIN_UID_REPLACE_ME'",
+      ".write": "auth != null && auth.uid == 'ADMIN_UID_REPLACE_ME'"
+    },
+    "orders": {
+      ".read": "auth != null && auth.uid == 'ADMIN_UID_REPLACE_ME'",
+      ".write": "auth != null && auth.uid == 'ADMIN_UID_REPLACE_ME'"
+    }
+    // Note: You must replace 'ADMIN_UID_REPLACE_ME' with the actual UID of your admin user.
+  }
+}
