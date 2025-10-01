@@ -13,7 +13,7 @@ const products = [
     image: PlaceHolderImages.find((img) => img.id === "product-1"),
     title: "Starter Bot Kit",
     description: "The perfect introduction to robotics. Build your first autonomous robot with our easy-to-follow guide.",
-    price: "$99.99",
+    price: "₹7,999",
     features: ["Arduino-based controller", "Ultrasonic sensor for navigation", "All tools and parts included", "Online step-by-step tutorials"]
   },
   {
@@ -21,7 +21,7 @@ const products = [
     image: PlaceHolderImages.find((img) => img.id === "product-2"),
     title: "Advanced Sensor Pack",
     description: "Expand your robot's capabilities with a range of advanced sensors for navigation and interaction.",
-    price: "$49.99",
+    price: "₹3,999",
     features: ["Infrared line followers", "Gyroscope and accelerometer", "Sound and light sensors", "Plug-and-play with Starter Bot"]
   },
   {
@@ -29,7 +29,7 @@ const products = [
     image: PlaceHolderImages.find((img) => img.id === "product-3"),
     title: "AI Vision Module",
     description: "Give your creation the power of sight. Integrates seamlessly with our core platform for object recognition.",
-    price: "$79.99",
+    price: "₹6,499",
     features: ["Onboard camera", "Pre-trained models for object detection", "Python API for custom projects", "Integrates with Raspberry Pi"]
   },
    {
@@ -37,7 +37,7 @@ const products = [
     image: PlaceHolderImages.find((img) => img.id === "hero-1"), // Using a placeholder
     title: "DIY Drone Kit",
     description: "Build and fly your own drone with this comprehensive kit, including a high-res camera.",
-    price: "$129.99",
+    price: "₹10,999",
     features: ["4K camera module", "GPS for stable flight", "Carbon fiber frame", "30-minute flight time"]
   },
 ];
