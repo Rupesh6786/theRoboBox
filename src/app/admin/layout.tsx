@@ -28,7 +28,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { getAuth, onAuthStateChanged, signOut, type User } from "firebase/auth";
 import { app } from "@/lib/firebase";
 import React, { useEffect, useState } from "react";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -130,19 +130,33 @@ export default function AdminLayout({
           </SidebarMenu>
         </SidebarContent>
         <SidebarFooter>
+          <div className="text-center text-xs text-muted-foreground p-2 group-data-[collapsible=icon]:hidden">
+             © {new Date().getFullYear()} RoboBox
+          </div>
+        </SidebarFooter>
+      </Sidebar>
+      <SidebarInset>
+        <header className="flex h-14 items-center gap-4 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-6 sticky top-0 z-30">
+          <SidebarTrigger className="md:hidden" />
+          <div className="flex-1">
+            <h1 className="text-lg font-semibold">
+              {menuItems.find((item) => item.href === pathname)?.label || "Dashboard"}
+            </h1>
+          </div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
                 variant="ghost"
-                className="flex h-auto w-full items-center justify-start gap-2 p-2"
+                className="flex h-auto items-center justify-start gap-2 p-2"
               >
                 <Avatar className="h-8 w-8">
+                  <AvatarImage src={user.photoURL || undefined} alt={user.email || 'Admin'} />
                   <AvatarFallback>{getInitials(user.email)}</AvatarFallback>
                 </Avatar>
-                <div className="hidden flex-col items-start group-data-[collapsible=icon]:hidden">
+                <div className="flex-col items-start hidden sm:flex">
                   <span className="text-sm font-medium">{user.email || 'Admin'}</span>
                 </div>
-                <ChevronDown className="ml-auto hidden h-4 w-4 group-data-[collapsible=icon]:hidden" />
+                <ChevronDown className="ml-auto hidden h-4 w-4 sm:flex" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">
@@ -159,16 +173,6 @@ export default function AdminLayout({
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-        </SidebarFooter>
-      </Sidebar>
-      <SidebarInset>
-        <header className="flex h-14 items-center gap-4 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-6 sticky top-0 z-30">
-          <SidebarTrigger className="md:hidden" />
-          <div className="flex-1">
-            <h1 className="text-lg font-semibold">
-              {menuItems.find((item) => item.href === pathname)?.label || "Dashboard"}
-            </h1>
-          </div>
         </header>
         <main className="flex-1 overflow-auto p-6">{children}</main>
       </SidebarInset>
