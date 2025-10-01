@@ -17,13 +17,14 @@ export default function Header() {
       <div className="container flex h-14 max-w-screen-2xl items-center">
         <div className="mr-4 flex items-center">
           <Link href="/" className="mr-6 flex items-center">
-            <Image 
-              src="/img/logo.png" 
-              alt="Company Logo" 
-              width={40} 
-              height={40} 
-              className="rounded-full"
-            />
+            <div className="bg-primary p-1 rounded-full">
+              <Image 
+                src="/img/logo.png" 
+                alt="Company Logo" 
+                width={40} 
+                height={40}
+              />
+            </div>
           </Link>
           <nav className="hidden gap-6 text-sm md:flex">
             {navLinks.map((link) => (
