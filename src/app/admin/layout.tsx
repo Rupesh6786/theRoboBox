@@ -25,7 +25,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
+import { getAuth, onAuthStateChanged, signOut, type User } from "firebase/auth";
 import { app } from "@/lib/firebase";
 import React, { useEffect, useState } from "react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -55,14 +55,14 @@ export default function AdminLayout({
   const pathname = usePathname();
   const auth = getAuth(app);
   const router = useRouter();
-  const [user, setUser] = useState(auth.currentUser);
+  const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const ADMIN_UID = "jy39QM0BtDROwlkLPZvFFV4H8mk2";
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user && user.uid === ADMIN_UID) {
-        setUser(user);
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      if (currentUser && currentUser.uid === ADMIN_UID) {
+        setUser(currentUser);
       } else {
         router.push("/login");
       }
@@ -89,7 +89,7 @@ export default function AdminLayout({
   }
   
   if (!user) {
-    return null; // The useEffect hook will handle the redirect.
+    return null; // The useEffect hook handles the redirect.
   }
 
 
@@ -98,8 +98,8 @@ export default function AdminLayout({
       <Sidebar>
         <SidebarHeader>
           <div className="flex items-center gap-2">
-            <LayoutDashboard className="h-6 w-6 text-primary" />
-            <h1 className="text-xl font-semibold">Admin Panel</h1>
+            <Bot className="h-8 w-8 text-primary"/>
+            <h1 className="text-xl font-semibold">RoboBox Admin</h1>
           </div>
         </SidebarHeader>
         <SidebarContent>
@@ -131,7 +131,7 @@ export default function AdminLayout({
                   <AvatarFallback>{getInitials(user.email)}</AvatarFallback>
                 </Avatar>
                 <div className="hidden flex-col items-start group-data-[collapsible=icon]:hidden">
-                  <span className="text-sm font-medium">{user.email}</span>
+                  <span className="text-sm font-medium">{user.email || 'Admin'}</span>
                 </div>
                 <ChevronDown className="ml-auto hidden h-4 w-4 group-data-[collapsible=icon]:hidden" />
               </Button>
@@ -153,7 +153,7 @@ export default function AdminLayout({
         </SidebarFooter>
       </Sidebar>
       <SidebarInset>
-        <header className="flex h-14 items-center gap-4 border-b bg-background px-6">
+        <header className="flex h-14 items-center gap-4 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-6 sticky top-0 z-30">
           <SidebarTrigger className="md:hidden" />
           <div className="flex-1">
             <h1 className="text-lg font-semibold">
@@ -166,5 +166,3 @@ export default function AdminLayout({
     </SidebarProvider>
   );
 }
-
-    

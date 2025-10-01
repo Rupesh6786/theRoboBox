@@ -31,6 +31,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Loader2, Mail, Key, LogIn, UserPlus, Phone, MessageSquare, CheckCircle, XCircle } from "lucide-react";
 import Image from "next/image";
 import { Progress } from "@/components/ui/progress";
+import { Separator } from "@/components/ui/separator";
 
 declare global {
   interface Window {
@@ -141,13 +142,14 @@ export default function LoginPage() {
         setAuthView("login");
       } else {
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
-        if (!userCredential.user.emailVerified && userCredential.user.uid !== ADMIN_UID) {
+        if (userCredential.user.uid !== ADMIN_UID && !userCredential.user.emailVerified) {
            toast({
             title: "Email Not Verified",
             description: "Please verify your email before logging in.",
             variant: "destructive",
           });
           await getAuth(app).signOut();
+          setLoading(false);
           return;
         }
         toast({ title: "Login Successful" });
@@ -236,7 +238,7 @@ export default function LoginPage() {
         return (
           <>
             <CardHeader className="text-center">
-              <Image src="/img/logofavicon.ico" alt="Logo" width={180} height={74} className="mx-auto mb-4 h-20 w-auto" />
+              <Image src="/img/logo.png" alt="Logo" width={180} height={74} className="mx-auto mb-4 h-20 w-auto" />
               <CardTitle className="text-3xl font-bold font-headline">
                 {authView === 'login' ? "Welcome Back" : "Create an Account"}
               </CardTitle>
@@ -263,16 +265,13 @@ export default function LoginPage() {
                 {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 {authView === 'login' ? <><LogIn className="mr-2" /> Sign In</> : <><UserPlus className="mr-2" /> Create Account</>}
               </Button>
-              <div className="relative my-4">
-                <div className="absolute inset-0 flex items-center">
-                    <span className="w-full border-t" />
+               <div className="my-4 flex items-center">
+                  <Separator className="flex-1" />
+                  <span className="px-4 text-xs uppercase text-muted-foreground">
+                    Or
+                  </span>
+                  <Separator className="flex-1" />
                 </div>
-                <div className="relative flex justify-center text-xs uppercase">
-                    <span className="bg-card px-2 text-muted-foreground">
-                    Or continue with
-                    </span>
-                </div>
-              </div>
               <div className="flex flex-col gap-2">
                  <Button variant="outline" className="w-full" onClick={handleGoogleSignIn} disabled={loading}>
                    <svg className="mr-2 h-4 w-4" aria-hidden="true" focusable="false" data-prefix="fab" data-icon="google" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 488 512"><path fill="currentColor" d="M488 261.8C488 403.3 391.1 504 248 504 110.8 504 0 393.2 0 256S110.8 8 248 8c66.8 0 126 23.4 172.9 61.9l-79.9 67.9C291.2 110.4 221.2 102.3 167 121c-52.2 18.1-84 69.4-76.8 122.9 8.5 60.5 59.9 104.9 121.2 102.3 54.4-2.3 93.3-33.5 105.8-64.4H248V261.8h232.2z"></path></svg>
@@ -379,5 +378,3 @@ export default function LoginPage() {
     </div>
   );
 }
-
-    
