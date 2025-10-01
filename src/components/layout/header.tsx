@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Menu, Search } from "lucide-react";
@@ -72,9 +73,9 @@ const NavLink = ({ link, isMobile }: { link: (typeof navLinks)[number]; isMobile
         return (
             <DropdownMenu open={open} onOpenChange={setOpen}>
               <DropdownMenuTrigger asChild>
-                <div 
+                <div
                   className="py-2"
-                  onMouseEnter={() => setOpen(true)} 
+                  onMouseEnter={() => setOpen(true)}
                   onMouseLeave={() => setOpen(false)}
                 >
                     <Button variant="ghost" className="font-medium text-foreground/60 transition-colors hover:text-foreground/80 hover:bg-transparent p-0 h-auto">
@@ -82,8 +83,8 @@ const NavLink = ({ link, isMobile }: { link: (typeof navLinks)[number]; isMobile
                     </Button>
                 </div>
               </DropdownMenuTrigger>
-              <DropdownMenuContent 
-                onMouseEnter={() => setOpen(true)} 
+              <DropdownMenuContent
+                onMouseEnter={() => setOpen(true)}
                 onMouseLeave={() => setOpen(false)}
               >
                 {link.subLinks.map((subLink) => (
@@ -114,20 +115,23 @@ const renderNavLinks = (isMobile = false) => {
 
 
 export default function Header() {
+  const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
+
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-20 max-w-screen-2xl items-center">
-        <div className="mr-4 hidden md:flex">
+        <div className="mr-4 flex items-center">
           <Link href="/" className="mr-6 flex items-center space-x-2">
-            <Image 
-              src="/img/logo.png" 
-              alt="Company Logo" 
-              width={160} 
+            <Image
+              src="/img/logo.png"
+              alt="Company Logo"
+              width={160}
               height={66}
               className="h-16 w-auto"
             />
           </Link>
         </div>
+
 
         <div className="flex-1 items-center justify-center hidden md:flex">
           <nav className="flex items-center gap-6 text-sm">
@@ -137,7 +141,12 @@ export default function Header() {
 
         <div className="flex flex-1 items-center justify-end space-x-2">
           <div className="w-full flex-1 md:w-auto md:flex-none">
-            <Button variant="outline" className="md:hidden" size="icon">
+            <Button
+              variant="outline"
+              className="md:hidden"
+              size="icon"
+              onClick={() => setMobileSearchOpen(!mobileSearchOpen)}
+            >
               <Search className="h-4 w-4" />
               <span className="sr-only">Search</span>
             </Button>
@@ -156,25 +165,22 @@ export default function Header() {
                 <span className="sr-only">Toggle Menu</span>
               </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="w-[300px] sm:w-[400px]">
-              <div className="p-4">
-                <Link href="/" className="mb-8 flex items-center space-x-2">
-                  <Image 
-                    src="/img/logo.png" 
-                    alt="Company Logo" 
-                    width={160} 
-                    height={66}
-                    className="h-12 w-auto"
-                  />
-                </Link>
-              </div>
-              <nav className="flex flex-col gap-6 px-4 text-lg">
+            <SheetContent side="right" className="w-[300px] sm:w-[400px]">
+              <nav className="flex flex-col gap-6 px-4 pt-8 text-lg">
                 {renderNavLinks(true)}
               </nav>
             </SheetContent>
           </Sheet>
         </div>
       </div>
+      {mobileSearchOpen && (
+        <div className="container md:hidden pb-4">
+           <div className="relative">
+              <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
+              <Input type="search" placeholder="Search..." className="w-full rounded-lg bg-background pl-10" />
+            </div>
+        </div>
+      )}
     </header>
   );
 }
