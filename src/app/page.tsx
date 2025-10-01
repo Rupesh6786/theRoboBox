@@ -7,6 +7,7 @@ import DiscountGenerator from "@/components/sections/discount-generator";
 import SchoolRegistration from "@/components/sections/school-registration";
 import FaqSection from "@/components/sections/faq-section";
 import AnimateOnScroll from "@/components/animate-on-scroll";
+import BookDemoModal from "@/components/book-demo-modal";
 
 export default function Home() {
   return (
@@ -31,6 +32,7 @@ export default function Home() {
         </AnimateOnScroll>
       </main>
       <Footer />
+      <BookDemoModal />
     </div>
   );
 }

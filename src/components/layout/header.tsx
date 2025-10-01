@@ -36,7 +36,7 @@ export default function Header() {
 
         <div className="flex flex-1 items-center justify-end gap-2">
           <Button asChild>
-            <Link href="#products">Get Started</Link>
+            <Link href="/login">Login</Link>
           </Button>
           <Sheet>
             <SheetTrigger asChild>
