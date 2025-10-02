@@ -120,7 +120,7 @@ export default function NewWorkshopPage() {
                         <FormField control={form.control} name="date" render={({ field }) => ( <FormItem> <FormLabel>Date</FormLabel> <FormControl><Input placeholder="e.g., October 12, 2024" {...field} /></FormControl> <FormMessage /> </FormItem> )} />
                         <FormField control={form.control} name="duration" render={({ field }) => ( <FormItem> <FormLabel>Duration</FormLabel> <FormControl><Input placeholder="e.g., 3 Hours" {...field} /></FormControl> <FormMessage /> </FormItem> )} />
                         <FormField control={form.control} name="time" render={({ field }) => ( <FormItem> <FormLabel>Time</FormLabel> <FormControl><Input placeholder="e.g., 10:00 AM - 1:00 PM" {...field} /></FormControl> <FormMessage /> </FormItem> )} />
-                        <FormField control={form.control} name="venue" render={({ field }) => ( <FormItem> <FormLabel>Venue</FormLabel> <FormControl><Input placeholder="e.g., Main Auditorium" {...field} /></FormControl> <FormMessage /> </FormMessage> )} />
+                        <FormField control={form.control} name="venue" render={({ field }) => ( <FormItem> <FormLabel>Venue</FormLabel> <FormControl><Input placeholder="e.g., Main Auditorium" {...field} /></FormControl> <FormMessage /> </FormItem> )} />
                         <FormField control={form.control} name="address" render={({ field }) => ( <FormItem> <FormLabel>Address</FormLabel> <FormControl><Input placeholder="e.g., 123 Innovation Drive, Tech City" {...field} /></FormControl> <FormMessage /> </FormItem> )} />
                     </div>
                     <FormField
