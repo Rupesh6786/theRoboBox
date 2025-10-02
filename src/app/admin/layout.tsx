@@ -21,7 +21,8 @@ import {
   Settings,
   LogOut,
   ChevronDown,
-  Bot
+  Bot,
+  MessageSquareQuote,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -45,6 +46,7 @@ const menuItems = [
   { href: "/admin/products", label: "Products", icon: Box },
   { href: "/admin/kits", label: "Kits", icon: Wrench },
   { href: "/admin/users", label: "Users", icon: Users },
+  { href: "/admin/enquiries", label: "Enquiries", icon: MessageSquareQuote },
   { href: "/admin/settings", label: "Settings", icon: Settings },
 ];
 

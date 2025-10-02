@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, useRef, useEffect, type KeyboardEvent } from "react";
+import { useState, useRef, useEffect, type KeyboardEvent, Suspense } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -26,7 +26,7 @@ import {
   type UserCredential,
 } from "firebase/auth";
 import { app } from "@/lib/firebase";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, Mail, Key, LogIn, UserPlus, Phone, MessageSquare, CheckCircle, XCircle } from "lucide-react";
 import Image from "next/image";
@@ -92,8 +92,7 @@ const PasswordStrengthIndicator = ({ password }: { password: string }) => {
   );
 };
 
-
-export default function LoginPage() {
+function LoginPageContent() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
@@ -105,6 +104,8 @@ export default function LoginPage() {
 
   const auth = getAuth(app);
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectUrl = searchParams.get('redirect') || '/account';
   const { toast } = useToast();
   const ADMIN_UID = "jy39QM0BtDROwlkLPZvFFV4H8mk2";
 
@@ -125,7 +126,7 @@ export default function LoginPage() {
     if (userCredential.user.uid === ADMIN_UID) {
       router.push("/admin");
     } else {
-      router.push("/account");
+      router.push(redirectUrl);
     }
   }
 
@@ -348,39 +349,48 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background p-4 overflow-hidden relative">
-      <div className="absolute inset-0 z-0 opacity-20">
-        <Image 
-          src="/img/humanoid-robot.png" 
-          alt="Humanoid Robot"
-          fill
-          style={{objectFit: "cover"}}
-          className="animate-[pulse_10s_ease-in-out_infinite]"
-        />
-        <div className="absolute inset-0 bg-gradient-to-br from-background via-transparent to-background"></div>
-      </div>
-      
-      <Card className="w-full max-w-md shadow-2xl z-10 bg-card/80 backdrop-blur-sm">
+      <div className="flex min-h-screen items-center justify-center bg-background p-4 overflow-hidden relative">
+        <div className="absolute inset-0 z-0 opacity-20">
+            <Image 
+            src="/img/humanoid-robot.png" 
+            alt="Humanoid Robot"
+            fill
+            style={{objectFit: "cover"}}
+            className="animate-[pulse_10s_ease-in-out_infinite]"
+            />
+            <div className="absolute inset-0 bg-gradient-to-br from-background via-transparent to-background"></div>
+        </div>
         
-        {renderForm()}
-        
-        { (authView === 'login' || authView === 'register') && (
-            <CardFooter>
-                <div className="flex items-center w-full">
-                    <p className="text-sm text-muted-foreground mx-auto">
-                        {authView === 'login' ? "Don't have an account?" : "Already have an account?"}
-                        <Button
-                        variant="link"
-                        className="pl-2"
-                        onClick={() => setAuthView(authView === 'login' ? 'register' : 'login')}
-                        >
-                        {authView === 'login' ? "Register" : "Login"}
-                        </Button>
-                    </p>
-                </div>
-            </CardFooter>
-        )}
-      </Card>
-    </div>
+        <Card className="w-full max-w-md shadow-2xl z-10 bg-card/80 backdrop-blur-sm">
+            
+            {renderForm()}
+            
+            { (authView === 'login' || authView === 'register') && (
+                <CardFooter>
+                    <div className="flex items-center w-full">
+                        <p className="text-sm text-muted-foreground mx-auto">
+                            {authView === 'login' ? "Don't have an account?" : "Already have an account?"}
+                            <Button
+                            variant="link"
+                            className="pl-2"
+                            onClick={() => setAuthView(authView === 'login' ? 'register' : 'login')}
+                            >
+                            {authView === 'login' ? "Register" : "Login"}
+                            </Button>
+                        </p>
+                    </div>
+                </CardFooter>
+            )}
+        </Card>
+        </div>
   );
 }
+
+export default function LoginPage() {
+    return (
+        <Suspense fallback={<div>Loading...</div>}>
+            <LoginPageContent />
+        </Suspense>
+    );
+}
+

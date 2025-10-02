@@ -1,9 +1,11 @@
+
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -11,15 +13,14 @@ import {
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
 import { CheckCircle, Loader2 } from "lucide-react";
-import { handleSubmitAction, type FormValues } from "@/app/actions/school-registration";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
+import { useAuth } from "@/context/auth-context";
 
 const formSchema = z.object({
   schoolName: z.string().min(2, {
@@ -29,6 +30,8 @@ const formSchema = z.object({
   email: z.string().email("Please enter a valid email address."),
   phone: z.string().min(10, "Please enter a valid mobile number."),
 });
+
+export type FormValues = z.infer<typeof formSchema>;
 
 const benefits = [
     "STEM-AI Innovation Lab",
@@ -42,6 +45,8 @@ export default function SchoolRegistration() {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const registrationImage = PlaceHolderImages.find(img => img.id === 'info-1');
+  const { user } = useAuth();
+  const router = useRouter();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -55,22 +60,17 @@ export default function SchoolRegistration() {
 
   async function onSubmit(values: FormValues) {
     setIsSubmitting(true);
-    const result = await handleSubmitAction(values);
-    setIsSubmitting(false);
+    
+    // Store data in session storage to pass to the confirmation page
+    sessionStorage.setItem('consultationData', JSON.stringify(values));
 
-    if (result.success) {
-      toast({
-        title: "Consultation Request Received!",
-        description: `Thank you, ${values.contactName}. We'll be in touch soon to schedule your free consultation.`,
-      });
-      form.reset();
+    if (user) {
+      router.push('/confirm-consultation');
     } else {
-        toast({
-            title: "Submission Failed",
-            description: "Something went wrong. Please try again.",
-            variant: "destructive",
-        })
+      router.push('/login?redirect=/confirm-consultation');
     }
+
+    setIsSubmitting(false);
   }
 
   return (
@@ -146,7 +146,7 @@ export default function SchoolRegistration() {
                         </div>
                         <Button type="submit" size="lg" className="w-full" disabled={isSubmitting}>
                         {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                        {isSubmitting ? "Submitting..." : "Get Your Free Consultation"}
+                        {isSubmitting ? "Processing..." : "Get Your Free Consultation"}
                         </Button>
                     </form>
                 </Form>
