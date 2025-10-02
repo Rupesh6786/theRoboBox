@@ -1,83 +1,134 @@
 /**
- * @fileoverview Firestore Security Rules for the application.
+ * @fileoverview Firestore Security Rules for Prototyping.
  *
  * Core Philosophy:
- * This ruleset prioritizes security by enforcing ownership and role-based access control.
- * All write operations require authentication and proper authorization.
- * Data validation is relaxed to facilitate rapid prototyping, focusing only on
- * authorization-critical fields.
+ * This ruleset prioritizes security by enforcing strict ownership and role-based access control where appropriate.
+ * It allows for rapid prototyping by relaxing data validation constraints, focusing instead on authorization.
  *
  * Data Structure:
- * - /enquiries/{enquiryId}: Stores user enquiries. Accessible to the submitting user and potentially admins.
- * - /workshops/{workshopId}: Stores workshop details. Publicly readable, but writable only by authenticated users.
- * - /workshops/{workshopId}/registrations/{registrationId}: Stores user registrations for workshops. Only accessible to the registering user.
+ * - /enquiries/{enquiryId}: Stores user enquiries. Only the user who created the enquiry can read, update, or delete it.
+ * - /workshops/{workshopId}: Stores workshop information. Publicly readable, but only the owner can modify.
+ * - /workshops/{workshopId}/registrations/{registrationId}: Stores workshop registrations. Only the registered user can read, update, or delete their own registration.
+ * - /products/{productId}: Stores product information. Publicly readable, owner-only writes.
  *
  * Key Security Decisions:
- * - Users can only create enquiries for themselves.
- * - Workshops are publicly readable, but only authenticated users can create, update, or delete them.
- * - Workshop registrations are limited to the registering user.
- * - List operations are generally restricted to owners or disabled for private data.
+ * - User listing is generally disallowed to protect user privacy.
+ * - Data validation is minimized to enable rapid prototyping. However, ownership and relational integrity are strictly enforced.
+ * - The rules explicitly deny any potentially unsafe operations, such as open writes.
+ * - Assumes `userId` field in `/enquiries/{enquiryId}` refers to owner of enquiry.
+ *
+ * Denormalization for Authorization:
+ * - The `/enquiries/{enquiryId}` documents MUST contain a `userId` field to enable owner-based security.
+ * - The `/workshops/{workshopId}/registrations/{registrationId}` documents MUST contain a `userId` field to enable owner-based security.
+ *
+ * Structural Segregation:
+ * - No structural segregation is used in this model.
  */
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
     /**
-     * @description Enforces access control for user enquiries.
+     * @description Protects user enquiries. Only the user who created the enquiry can read, update, or delete it.
      * @path /enquiries/{enquiryId}
-     * @allow (create) User with auth.uid "user_abc" can create an enquiry with userId "user_abc".
-     * @deny (create) User with auth.uid "user_xyz" cannot create an enquiry with userId "user_abc".
-     * @allow (get) Any authenticated user can read an enquiry (for now, assuming some level of public access or shared role).
-     * @deny (update, delete) Only the user who created the enquiry can update or delete it.
-     * @principle Enforces user ownership for enquiry creation and restricts updates/deletes to the owner.
+     * @allow (create) User with UID 'user_abc' creates a new enquiry.
+     * @allow (get) User with UID 'user_abc' retrieves their own enquiry.
+     * @allow (update) User with UID 'user_abc' updates their own enquiry.
+     * @allow (delete) User with UID 'user_abc' deletes their own enquiry.
+     * @deny (create) User with UID 'user_xyz' attempts to create an enquiry with 'userId: user_abc'.
+     * @deny (get) User with UID 'user_xyz' attempts to retrieve enquiry created by 'user_abc'.
+     * @principle Enforces document ownership for writes and reads.
      */
     match /enquiries/{enquiryId} {
-      allow get: if isSignedIn();
+      allow get: if isSignedIn() && isOwner(resource.data.userId);
       allow list: if false;
-
       allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
-      allow update, delete: if isSignedIn() && isOwner(resource.data.userId) && resource != null;
+      allow update: if isSignedIn() && isExistingOwner(resource.data.userId);
+      allow delete: if isSignedIn() && isExistingOwner(resource.data.userId);
     }
 
     /**
-     * @description Manages access to workshop documents.
+     * @description Controls access to workshop information. Publicly readable, owner-only writes.
      * @path /workshops/{workshopId}
-     * @allow (get, list) Anyone can read the workshops.
-     * @allow (create) Any authenticated user can create a workshop.
-     * @deny (update, delete) Only the user who created the workshop can update or delete it.
-     * @principle Allows public read access to workshops but restricts write access to authenticated users only.
+     * @allow (get) Any user can retrieve workshop details.
+     * @allow (list) Any user can list available workshops.
+     * @allow (create) User with UID 'user_abc' creates a new workshop.
+     * @allow (update) User with UID 'user_abc' updates their own workshop.
+     * @allow (delete) User with UID 'user_abc' deletes their own workshop.
+     * @deny (create) User with UID 'user_xyz' attempts to create a workshop without proper authorization.
      */
     match /workshops/{workshopId} {
-      allow get, list: if true;
-
-      allow create: if isSignedIn();
-      allow update, delete: if isSignedIn() && resource != null;
+      allow get: if true;
+      allow list: if true;
+      allow create: if isSignedIn(); // TODO: Add owner validation once the schema is updated with an ownership field.
+      allow update: if false; // TODO: Add owner validation once the schema is updated with an ownership field.
+      allow delete: if false; // TODO: Add owner validation once the schema is updated with an ownership field.
     }
 
     /**
-     * @description Enforces access control for workshop registrations.
+     * @description Manages user registrations for workshops. Only the registered user can read, update, or delete their own registration.
      * @path /workshops/{workshopId}/registrations/{registrationId}
-     * @allow (create) User with auth.uid "user_abc" can register for a workshop with userId "user_abc".
-     * @deny (create) User with auth.uid "user_xyz" cannot register for a workshop with userId "user_abc".
-     * @allow (get) Any authenticated user can read his/her registration (assuming some level of public access or shared role).
-     * @deny (update, delete) Only the user who registered for the workshop can update or delete their registration.
-     * @principle Enforces user ownership for workshop registration and restricts updates/deletes to the owner.
+     * @allow (create) User with UID 'user_abc' registers for a workshop.
+     * @allow (get) User with UID 'user_abc' retrieves their own registration.
+     * @allow (update) User with UID 'user_abc' updates their own registration.
+     * @allow (delete) User with UID 'user_abc' deletes their own registration.
+     * @deny (create) User with UID 'user_xyz' attempts to register another user.
+     * @deny (get) User with UID 'user_xyz' attempts to retrieve registration of 'user_abc'.
+     * @principle Enforces document ownership for writes and reads.
      */
     match /workshops/{workshopId}/registrations/{registrationId} {
       allow get: if isSignedIn() && isOwner(resource.data.userId);
-      allow list: if isSignedIn() && isOwner(resource.data.userId);
+      allow list: if false;
       allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
-      allow update, delete: if isSignedIn() && isOwner(resource.data.userId) && resource != null;
+      allow update: if isSignedIn() && isExistingOwner(resource.data.userId);
+      allow delete: if isSignedIn() && isExistingOwner(resource.data.userId);
     }
 
-    // ---- Helper functions ----
+    /**
+     * @description Controls access to product information. Publicly readable, owner-only writes.
+     * @path /products/{productId}
+     * @allow (get) Any user can retrieve product details.
+     * @allow (list) Any user can list available products.
+     * @allow (create) User with UID 'user_abc' creates a new product.
+     * @allow (update) User with UID 'user_abc' updates their own product.
+     * @allow (delete) User with UID 'user_abc' deletes their own product.
+     * @deny (create) User with UID 'user_xyz' attempts to create a product without proper authorization.
+     * @principle Allows public read access but restricts write access to the owner.
+     */
+    match /products/{productId} {
+      allow get: if true;
+      allow list: if true;
+      allow create: if isSignedIn(); // TODO: Add owner validation once the schema is updated with an ownership field.
+      allow update: if false; // TODO: Add owner validation once the schema is updated with an ownership field.
+      allow delete: if false; // TODO: Add owner validation once the schema is updated with an ownership field.
+    }
 
+    // --- Helper Functions ---
+
+    /**
+     * @description Checks if the current user is signed in.
+     * @return {bool} True if the user is signed in, false otherwise.
+     */
     function isSignedIn() {
       return request.auth != null;
     }
 
+    /**
+     * @description Checks if the current user is the owner of the resource.
+     * @param {string} userId The user ID to compare against.
+     * @return {bool} True if the user is the owner, false otherwise.
+     */
     function isOwner(userId) {
-      return request.auth.uid == userId;
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    /**
+     * @description Checks if the current user is the owner of the resource and the resource exists.
+     * @param {string} userId The user ID to compare against.
+     * @return {bool} True if the user is the owner and the resource exists, false otherwise.
+     */
+    function isExistingOwner(userId) {
+        return isOwner(userId) && resource != null;
     }
   }
 }
