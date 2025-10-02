@@ -170,12 +170,13 @@ export default function Header() {
           <div className="w-full flex-1 md:w-auto md:flex-none">
             <Button
               variant="outline"
-              className="relative w-full justify-start text-sm text-muted-foreground sm:pr-12 md:w-40 lg:w-64"
+              className="w-full md:w-40 lg:w-64 md:justify-start md:text-sm md:text-muted-foreground"
+              size="icon"
               onClick={() => setSearchOpen(true)}
             >
-              <Search className="h-4 w-4 mr-2" />
-              <span className="hidden lg:inline-flex">Search...</span>
-              <span className="inline-flex lg:hidden">Search...</span>
+              <Search className="h-4 w-4 md:mr-2" />
+              <span className="hidden md:inline-flex">Search...</span>
+              <span className="sr-only">Search</span>
             </Button>
           </div>
           {user ? (
