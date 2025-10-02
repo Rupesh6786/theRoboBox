@@ -16,6 +16,7 @@ import { useState, useEffect } from "react";
 import { useAuth } from "@/context/auth-context";
 import { ScrollArea } from "../ui/scroll-area";
 import { SearchCommand } from "../search-command";
+import { cn } from "@/lib/utils";
 
 const navLinks = [
   {
@@ -146,7 +147,7 @@ export default function Header() {
     <>
     <SearchCommand open={searchOpen} onOpenChange={setSearchOpen} />
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-16 items-center">
+      <div className="container flex h-16 items-center px-4 md:px-6">
         <div className="mr-auto flex items-center">
           <Link href="/" className="flex items-center">
             <Image
@@ -154,7 +155,7 @@ export default function Header() {
               alt="Company Logo"
               width={180}
               height={74}
-              className="h-12 w-auto md:h-20"
+              className="h-12 w-auto md:h-16"
             />
           </Link>
         </div>
@@ -166,7 +167,7 @@ export default function Header() {
           </nav>
         </div>
 
-        <div className="flex flex-none items-center justify-end space-x-2">
+        <div className="flex items-center justify-end space-x-2 md:space-x-4">
            <Button
               variant="ghost"
               size="icon"
@@ -176,50 +177,65 @@ export default function Header() {
               <Search className="h-5 w-5" />
               <span className="sr-only">Search</span>
             </Button>
-          {user ? (
-            <Button asChild className="h-9 w-9" variant="ghost" size="icon">
-              <Link href="/account"><User className="h-5 w-5"/></Link>
-            </Button>
-          ) : (
-            <Button asChild className="h-9 w-9" variant="ghost" size="icon">
-              <Link href="/login"><User className="h-5 w-5"/></Link>
-            </Button>
-          )}
-          <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
-            <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="md:hidden h-9 w-9">
-                <Menu className="h-5 w-5" />
-                <span className="sr-only">Toggle Menu</span>
+          <div className="hidden md:flex items-center gap-2">
+            {user ? (
+              <Button asChild variant="ghost">
+                <Link href="/account">My Account</Link>
               </Button>
-            </SheetTrigger>
-            <SheetContent side="right" className="w-[300px] sm:w-[400px] flex flex-col">
-               <SheetHeader>
-                <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
-                <SheetDescription className="sr-only">
-                  Navigate the site using these links.
-                </SheetDescription>
-              </SheetHeader>
-              <ScrollArea className="flex-grow">
-                <nav className="flex flex-col gap-6 p-4 text-lg">
-                  {renderNavLinks(true)}
-                  <div className="border-t border-border/40 pt-6 mt-6 flex flex-col gap-4">
-                     {user ? (
-                        <Button asChild>
-                          <Link href="/account"><User className="mr-2"/> My Account</Link>
-                        </Button>
-                      ) : (
-                        <Button asChild>
-                          <Link href="/login">Login</Link>
-                        </Button>
-                      )}
-                  </div>
-                </nav>
-              </ScrollArea>
-            </SheetContent>
-          </Sheet>
+            ) : (
+              <Button asChild>
+                <Link href="/login">Login</Link>
+              </Button>
+            )}
+          </div>
+          <div className="md:hidden flex items-center">
+            {user ? (
+                <Button asChild className="h-9 w-9" variant="ghost" size="icon">
+                <Link href="/account"><User className="h-5 w-5"/></Link>
+                </Button>
+            ) : (
+                <Button asChild className="h-9 w-9" variant="ghost" size="icon">
+                <Link href="/login"><User className="h-5 w-5"/></Link>
+                </Button>
+            )}
+            <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+                <SheetTrigger asChild>
+                <Button variant="ghost" size="icon" className="h-9 w-9">
+                    <Menu className="h-5 w-5" />
+                    <span className="sr-only">Toggle Menu</span>
+                </Button>
+                </SheetTrigger>
+                <SheetContent side="right" className="w-[300px] sm:w-[400px] flex flex-col">
+                <SheetHeader>
+                    <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
+                    <SheetDescription className="sr-only">
+                    Navigate the site using these links.
+                    </SheetDescription>
+                </SheetHeader>
+                <ScrollArea className="flex-grow">
+                    <nav className="flex flex-col gap-6 p-4 text-lg">
+                    {renderNavLinks(true)}
+                    <div className="border-t border-border/40 pt-6 mt-6 flex flex-col gap-4">
+                        {user ? (
+                            <Button asChild>
+                            <Link href="/account"><User className="mr-2"/> My Account</Link>
+                            </Button>
+                        ) : (
+                            <Button asChild>
+                            <Link href="/login">Login</Link>
+                            </Button>
+                        )}
+                    </div>
+                    </nav>
+                </ScrollArea>
+                </SheetContent>
+            </Sheet>
+          </div>
         </div>
       </div>
     </header>
     </>
   );
 }
+
+    
