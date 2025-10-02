@@ -5,7 +5,7 @@ import { Menu, Search, User } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetDescription } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -146,15 +146,15 @@ export default function Header() {
     <>
     <SearchCommand open={searchOpen} onOpenChange={setSearchOpen} />
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-24 max-w-screen-2xl items-center">
-        <div className="mr-4 flex items-center">
-          <Link href="/" className="mr-6 flex items-center space-x-2">
+      <div className="container flex h-16 md:h-24 items-center">
+        <div className="flex items-center">
+          <Link href="/" className="flex items-center">
             <Image
               src="/img/logo.png"
               alt="Company Logo"
               width={180}
               height={74}
-              className="h-20 w-auto"
+              className="h-12 md:h-20 w-auto"
             />
           </Link>
         </div>
@@ -167,30 +167,26 @@ export default function Header() {
         </div>
 
         <div className="flex flex-1 items-center justify-end space-x-2">
-          <div className="w-full flex-1 md:w-auto md:flex-none">
-            <Button
-              variant="outline"
-              className="w-full md:w-40 lg:w-64 md:justify-start md:text-sm md:text-muted-foreground"
+           <Button
+              variant="ghost"
               size="icon"
               onClick={() => setSearchOpen(true)}
             >
-              <Search className="h-4 w-4 md:mr-2" />
-              <span className="hidden md:inline-flex">Search...</span>
+              <Search className="h-5 w-5" />
               <span className="sr-only">Search</span>
             </Button>
-          </div>
           {user ? (
-            <Button asChild>
+            <Button asChild className="hidden md:flex">
               <Link href="/account"><User className="mr-2"/> My Account</Link>
             </Button>
           ) : (
-            <Button asChild>
+            <Button asChild className="hidden md:flex">
               <Link href="/login">Login</Link>
             </Button>
           )}
           <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
             <SheetTrigger asChild>
-              <Button variant="outline" size="icon" className="md:hidden">
+              <Button variant="ghost" size="icon" className="md:hidden">
                 <Menu className="h-5 w-5" />
                 <span className="sr-only">Toggle Menu</span>
               </Button>
@@ -205,6 +201,17 @@ export default function Header() {
               <ScrollArea className="flex-grow">
                 <nav className="flex flex-col gap-6 p-4 text-lg">
                   {renderNavLinks(true)}
+                  <div className="border-t border-border/40 pt-6 mt-6 flex flex-col gap-4">
+                     {user ? (
+                        <Button asChild>
+                          <Link href="/account"><User className="mr-2"/> My Account</Link>
+                        </Button>
+                      ) : (
+                        <Button asChild>
+                          <Link href="/login">Login</Link>
+                        </Button>
+                      )}
+                  </div>
                 </nav>
               </ScrollArea>
             </SheetContent>
