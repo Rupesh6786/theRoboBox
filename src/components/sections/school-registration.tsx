@@ -3,24 +3,23 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import Image from "next/image";
 
 import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
-import { Loader2 } from "lucide-react";
+import { CheckCircle, Loader2 } from "lucide-react";
 import { handleSubmitAction, type FormValues } from "@/app/actions/school-registration";
+import { PlaceHolderImages } from "@/lib/placeholder-images";
 
 const formSchema = z.object({
   schoolName: z.string().min(2, {
@@ -28,14 +27,21 @@ const formSchema = z.object({
   }),
   contactName: z.string().min(2, "Contact name must be at least 2 characters."),
   email: z.string().email("Please enter a valid email address."),
-  phone: z.string().optional(),
-  message: z.string().max(500, "Message cannot exceed 500 characters.").optional(),
+  phone: z.string().min(10, "Please enter a valid mobile number."),
 });
 
+const benefits = [
+    "STEM-AI Innovation Lab",
+    "Bagless Activities and Lifestyle",
+    "Competitions and Visibility",
+    "Expert Instructors",
+    "Syllabus on NEP Guidelines"
+];
 
 export default function SchoolRegistration() {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const registrationImage = PlaceHolderImages.find(img => img.id === 'info-1');
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -44,7 +50,6 @@ export default function SchoolRegistration() {
       contactName: "",
       email: "",
       phone: "",
-      message: "",
     },
   });
 
@@ -55,8 +60,8 @@ export default function SchoolRegistration() {
 
     if (result.success) {
       toast({
-        title: "Registration Received!",
-        description: `Thank you, ${result.schoolName}. We'll be in touch soon!`,
+        title: "Consultation Request Received!",
+        description: `Thank you, ${values.contactName}. We'll be in touch soon to schedule your free consultation.`,
       });
       form.reset();
     } else {
@@ -69,98 +74,95 @@ export default function SchoolRegistration() {
   }
 
   return (
-    <section id="register" className="bg-secondary/50">
+    <section id="register" className="bg-secondary/30">
       <div className="container mx-auto">
-        <Card className="max-w-3xl mx-auto shadow-lg">
-          <CardHeader className="text-center">
-            <CardTitle className="text-3xl font-bold tracking-tighter sm:text-4xl font-headline">
-              Partner with Us
-            </CardTitle>
-            <CardDescription className="md:text-xl">
-              Bring RoboBox Reimagined to your school or district.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  <FormField
-                    control={form.control}
-                    name="schoolName"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>School Name</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Innovate Academy" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="contactName"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Your Name</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Alex Doe" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="email"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Email Address</FormLabel>
-                        <FormControl>
-                          <Input placeholder="alex.doe@innovate.edu" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="phone"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Phone Number (Optional)</FormLabel>
-                        <FormControl>
-                          <Input placeholder="(555) 123-4567" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+        <div className="grid md:grid-cols-2 gap-12 items-center">
+            <div className="space-y-6">
+                 <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl font-headline text-primary">
+                    Empower Your School with Robobox
+                </h2>
+                <p className="text-muted-foreground text-lg">
+                    Join 50+ colleges and 20+ schools along with 20k+ students in revolutionizing education through cutting-edge robotics and technology curriculum.
+                </p>
+                <ul className="space-y-3">
+                    {benefits.map((benefit, index) => (
+                        <li key={index} className="flex items-center gap-3">
+                            <CheckCircle className="text-green-500 w-6 h-6"/>
+                            <span className="text-muted-foreground font-medium">{benefit}</span>
+                        </li>
+                    ))}
+                </ul>
+                 <Form {...form}>
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 pt-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <FormField
+                            control={form.control}
+                            name="schoolName"
+                            render={({ field }) => (
+                            <FormItem>
+                                <FormControl>
+                                <Input placeholder="School Name" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="contactName"
+                            render={({ field }) => (
+                            <FormItem>
+                                <FormControl>
+                                <Input placeholder="Your Name" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                            )}
+                        />
+                         <FormField
+                            control={form.control}
+                            name="email"
+                            render={({ field }) => (
+                            <FormItem>
+                                <FormControl>
+                                <Input placeholder="Email Address" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                            )}
+                        />
+                         <FormField
+                            control={form.control}
+                            name="phone"
+                            render={({ field }) => (
+                            <FormItem>
+                                <FormControl>
+                                <Input placeholder="Enter your mobile number" type="tel" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                            )}
+                        />
+                        </div>
+                        <Button type="submit" size="lg" className="w-full" disabled={isSubmitting}>
+                        {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                        {isSubmitting ? "Submitting..." : "Get Your Free Consultation"}
+                        </Button>
+                    </form>
+                </Form>
+            </div>
+             {registrationImage && (
+                <div className="relative h-[600px] w-full hidden md:block">
+                    <Image
+                        src={registrationImage.imageUrl}
+                        alt={registrationImage.description}
+                        fill
+                        className="object-cover rounded-lg shadow-xl"
+                        data-ai-hint={registrationImage.imageHint}
+                    />
                 </div>
-                 <FormField
-                    control={form.control}
-                    name="message"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Message</FormLabel>
-                        <FormControl>
-                          <Textarea placeholder="Tell us about your school's goals..." {...field} />
-                        </FormControl>
-                         <FormDescription>
-                          Let us know your program size, student ages, or any questions you have.
-                        </FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                <Button type="submit" className="w-full md:w-auto" disabled={isSubmitting}>
-                   {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                   {isSubmitting ? "Submitting..." : "Submit Inquiry"}
-                </Button>
-              </form>
-            </Form>
-          </CardContent>
-        </Card>
+            )}
+        </div>
       </div>
     </section>
   );
