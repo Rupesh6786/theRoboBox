@@ -148,7 +148,7 @@ export default function Header() {
     <>
     <SearchCommand open={searchOpen} onOpenChange={setSearchOpen} />
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-16 items-center px-4 md:px-6 md:h-24">
+      <div className="container flex h-20 md:h-24 items-center px-4 md:px-6">
         <Link href="/" className="mr-6 flex items-center">
             <Image
             src="/img/logo.png"
@@ -160,7 +160,7 @@ export default function Header() {
         </Link>
         
         <div className="hidden md:flex flex-1 justify-center">
-            <nav className="flex items-center gap-6 text-sm">
+             <nav className="flex items-center gap-6 text-sm">
                 {renderNavLinks()}
             </nav>
         </div>
@@ -247,4 +247,3 @@ export default function Header() {
     </>
   );
 }
-
