@@ -5,7 +5,7 @@ import { Menu, Search, User } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription, SheetTrigger } from "@/components/ui/sheet";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -146,15 +146,15 @@ export default function Header() {
     <>
     <SearchCommand open={searchOpen} onOpenChange={setSearchOpen} />
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-16 md:h-24 items-center">
-        <div className="flex items-center">
+      <div className="container flex h-16 items-center">
+        <div className="mr-auto flex items-center">
           <Link href="/" className="flex items-center">
             <Image
               src="/img/logo.png"
               alt="Company Logo"
               width={180}
               height={74}
-              className="h-12 md:h-20 w-auto"
+              className="h-12 w-auto md:h-20"
             />
           </Link>
         </div>
@@ -166,11 +166,12 @@ export default function Header() {
           </nav>
         </div>
 
-        <div className="flex flex-1 items-center justify-end space-x-2">
+        <div className="flex flex-none items-center justify-end space-x-2">
            <Button
               variant="ghost"
               size="icon"
               onClick={() => setSearchOpen(true)}
+              className="h-9 w-9"
             >
               <Search className="h-5 w-5" />
               <span className="sr-only">Search</span>
@@ -186,7 +187,7 @@ export default function Header() {
           )}
           <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="md:hidden">
+              <Button variant="ghost" size="icon" className="md:hidden h-9 w-9">
                 <Menu className="h-5 w-5" />
                 <span className="sr-only">Toggle Menu</span>
               </Button>
