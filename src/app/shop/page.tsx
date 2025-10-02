@@ -1,4 +1,9 @@
 
+"use client";
+
+import { useEffect, useState } from "react";
+import { collection, onSnapshot, query, orderBy, Timestamp } from "firebase/firestore";
+import { db } from "@/lib/firebase";
 import Image from "next/image";
 import {
   Card,
@@ -9,44 +14,48 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { PlaceHolderImages } from "@/lib/placeholder-images";
 import Link from "next/link";
-import { ArrowRight, ShoppingCart } from "lucide-react";
+import { ArrowRight, ShoppingCart, Loader2 } from "lucide-react";
 import Header from "@/components/layout/header";
 import Footer from "@/components/layout/footer";
+import { Badge } from "@/components/ui/badge";
 
-const products = [
-  {
-    id: "robobox",
-    image: PlaceHolderImages.find((img) => img.id === "product-1"),
-    title: "Starter Bot Kit",
-    description: "The perfect introduction to robotics. Build your first autonomous robot with our easy-to-follow guide.",
-    price: "₹7,999"
-  },
-  {
-    id: "mechatronics",
-    image: PlaceHolderImages.find((img) => img.id === "product-2"),
-    title: "Advanced Sensor Pack",
-    description: "Expand your robot's capabilities with a range of advanced sensors for navigation and interaction.",
-    price: "₹3,999"
-  },
-  {
-    id: "blix",
-    image: PlaceHolderImages.find((img) => img.id === "product-3"),
-    title: "AI Vision Module",
-    description: "Give your creation the power of sight. Integrates seamlessly with our core platform for object recognition.",
-    price: "₹6,499"
-  },
-   {
-    id: "drone",
-    image: PlaceHolderImages.find((img) => img.id === "hero-1"), // Using a placeholder
-    title: "DIY Drone Kit",
-    description: "Build and fly your own drone with this comprehensive kit, including a high-res camera.",
-    price: "₹10,999"
-  },
-];
+export interface Product {
+    id: string;
+    name: string;
+    description: string;
+    price: number;
+    discountPercentage?: number;
+    imageUrls: string[];
+    createdAt: Timestamp;
+}
 
 export default function ShopPage() {
+    const [products, setProducts] = useState<Product[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const q = query(collection(db, "products"), orderBy("createdAt", "desc"));
+        const unsubscribe = onSnapshot(q, (querySnapshot) => {
+            const productsData: Product[] = [];
+            querySnapshot.forEach((doc) => {
+                productsData.push({ id: doc.id, ...doc.data() } as Product);
+            });
+            setProducts(productsData);
+            setLoading(false);
+        });
+
+        return () => unsubscribe();
+    }, []);
+    
+    const formatCurrency = (amount: number) => {
+        return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(amount);
+    }
+    
+    const calculateDiscountedPrice = (price: number, discount: number) => {
+        return price - (price * discount / 100);
+    }
+
   return (
     <div className="flex flex-col min-h-dvh">
         <Header />
@@ -61,43 +70,58 @@ export default function ShopPage() {
                     Build, code, and innovate with our collection of robotics kits.
                 </p>
                 </div>
-
-                <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                {products.map((product) => (
-                    <Card key={product.id} className="flex flex-col overflow-hidden transition-transform duration-300 hover:scale-105 hover:shadow-xl">
-                    {product.image && (
+                
+                {loading ? (
+                    <div className="flex justify-center items-center h-64">
+                        <Loader2 className="w-12 h-12 animate-spin text-primary" />
+                    </div>
+                ) : (
+                    <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                    {products.map((product) => (
+                        <Card key={product.id} className="flex flex-col overflow-hidden transition-transform duration-300 hover:scale-105 hover:shadow-xl">
                         <div className="relative h-56 w-full">
-                        <Link href={`/kits/${product.id}`}>
-                            <Image
-                                src={product.image.imageUrl}
-                                alt={product.image.description}
-                                fill
-                                className="object-cover"
-                                data-ai-hint={product.image.imageHint}
-                            />
-                        </Link>
+                            <Link href={`/kits/${product.id}`}>
+                                <Image
+                                    src={product.imageUrls[0] || "https://picsum.photos/seed/1/600/400"}
+                                    alt={product.name}
+                                    fill
+                                    className="object-cover"
+                                />
+                            </Link>
+                            {product.discountPercentage && product.discountPercentage > 0 && (
+                                <Badge variant="destructive" className="absolute top-2 right-2">{product.discountPercentage}% OFF</Badge>
+                            )}
                         </div>
-                    )}
-                    <CardHeader>
-                        <CardTitle className="font-headline">{product.title}</CardTitle>
-                        <CardDescription>{product.description}</CardDescription>
-                    </CardHeader>
-                    <CardContent className="flex-grow">
-                        <p className="text-2xl font-bold text-primary">{product.price}</p>
-                    </CardContent>
-                    <CardFooter className="flex gap-2">
-                        <Button asChild variant="secondary" className="w-full">
-                        <Link href={`/kits/${product.id}`}>
-                            Details <ArrowRight className="ml-2" />
-                        </Link>
-                        </Button>
-                        <Button className="w-full">
-                            Add to Cart <ShoppingCart className="ml-2" />
-                        </Button>
-                    </CardFooter>
-                    </Card>
-                ))}
-                </div>
+                        <CardHeader>
+                            <CardTitle className="font-headline">{product.name}</CardTitle>
+                            <CardDescription>{product.description}</CardDescription>
+                        </CardHeader>
+                        <CardContent className="flex-grow">
+                             <div className="flex items-baseline gap-2">
+                                {product.discountPercentage && product.discountPercentage > 0 ? (
+                                    <>
+                                        <p className="text-2xl font-bold text-primary">{formatCurrency(calculateDiscountedPrice(product.price, product.discountPercentage))}</p>
+                                        <p className="text-lg font-medium text-muted-foreground line-through">{formatCurrency(product.price)}</p>
+                                    </>
+                                ) : (
+                                    <p className="text-2xl font-bold text-primary">{formatCurrency(product.price)}</p>
+                                )}
+                            </div>
+                        </CardContent>
+                        <CardFooter className="flex gap-2">
+                            <Button asChild variant="secondary" className="w-full">
+                            <Link href={`/kits/${product.id}`}>
+                                Details <ArrowRight className="ml-2" />
+                            </Link>
+                            </Button>
+                            <Button className="w-full">
+                                Add to Cart <ShoppingCart className="ml-2" />
+                            </Button>
+                        </CardFooter>
+                        </Card>
+                    ))}
+                    </div>
+                )}
             </div>
             </section>
         </main>

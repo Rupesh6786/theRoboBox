@@ -1,90 +1,131 @@
 
+"use client";
+
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { PlaceHolderImages } from "@/lib/placeholder-images";
 import Header from "@/components/layout/header";
 import Footer from "@/components/layout/footer";
 import { notFound } from "next/navigation";
-import { CheckCircle, ShoppingCart } from "lucide-react";
-
-const products = [
-  {
-    id: "robobox",
-    image: PlaceHolderImages.find((img) => img.id === "product-1"),
-    title: "Starter Bot Kit",
-    description: "The perfect introduction to robotics. Build your first autonomous robot with our easy-to-follow guide.",
-    price: "₹7,999",
-    features: ["Arduino-based controller", "Ultrasonic sensor for navigation", "All tools and parts included", "Online step-by-step tutorials"]
-  },
-  {
-    id: "mechatronics",
-    image: PlaceHolderImages.find((img) => img.id === "product-2"),
-    title: "Advanced Sensor Pack",
-    description: "Expand your robot's capabilities with a range of advanced sensors for navigation and interaction.",
-    price: "₹3,999",
-    features: ["Infrared line followers", "Gyroscope and accelerometer", "Sound and light sensors", "Plug-and-play with Starter Bot"]
-  },
-  {
-    id: "blix",
-    image: PlaceHolderImages.find((img) => img.id === "product-3"),
-    title: "AI Vision Module",
-    description: "Give your creation the power of sight. Integrates seamlessly with our core platform for object recognition.",
-    price: "₹6,499",
-    features: ["Onboard camera", "Pre-trained models for object detection", "Python API for custom projects", "Integrates with Raspberry Pi"]
-  },
-   {
-    id: "drone",
-    image: PlaceHolderImages.find((img) => img.id === "hero-1"), // Using a placeholder
-    title: "DIY Drone Kit",
-    description: "Build and fly your own drone with this comprehensive kit, including a high-res camera.",
-    price: "₹10,999",
-    features: ["4K camera module", "GPS for stable flight", "Carbon fiber frame", "30-minute flight time"]
-  },
-];
-
+import { CheckCircle, ShoppingCart, Loader2 } from "lucide-react";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
+import { db } from "@/lib/firebase";
+import { doc, getDoc } from "firebase/firestore";
+import type { Product } from "@/app/shop/page";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
 
 export default function KitDetailPage({ params }: { params: { kitId: string } }) {
-    const product = products.find(p => p.id === params.kitId);
+    const [product, setProduct] = useState<Product | null>(null);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchProduct = async () => {
+            const docRef = doc(db, "products", params.kitId);
+            const docSnap = await getDoc(docRef);
+            if (docSnap.exists()) {
+                setProduct({ id: docSnap.id, ...docSnap.data() } as Product);
+            } else {
+                notFound();
+            }
+            setLoading(false);
+        };
+        fetchProduct();
+    }, [params.kitId]);
+
+    const formatCurrency = (amount: number) => {
+        return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(amount);
+    }
+    
+    const calculateDiscountedPrice = (price: number, discount: number) => {
+        return price - (price * discount / 100);
+    }
+    
+    if (loading) {
+        return (
+            <div className="flex h-screen items-center justify-center bg-background">
+                <Loader2 className="w-16 h-16 animate-spin text-primary" />
+            </div>
+        );
+    }
 
     if (!product) {
-        notFound();
+        return notFound();
     }
+
+    const features = (product as any).features?.map((f: any) => f.value).filter(Boolean) || [];
 
     return (
         <div className="flex flex-col min-h-dvh bg-background">
             <Header />
             <main className="flex-1 py-12 md:py-24">
                 <div className="container mx-auto">
-                    <div className="grid md:grid-cols-2 gap-12 items-center">
-                        <div className="relative aspect-square rounded-lg overflow-hidden shadow-2xl">
-                             {product.image && (
-                                <Image
-                                    src={product.image.imageUrl}
-                                    alt={product.image.description}
-                                    fill
-                                    className="object-cover"
-                                    data-ai-hint={product.image.imageHint}
-                                />
-                             )}
-                             <div className="absolute top-4 right-4 bg-primary text-primary-foreground px-4 py-2 rounded-full font-bold shadow-lg">
-                                 {product.price}
-                             </div>
-                        </div>
-                        <div>
-                            <h1 className="text-4xl md:text-5xl font-bold font-headline mb-4">{product.title}</h1>
-                            <p className="text-lg text-muted-foreground mb-8">{product.description}</p>
+                    <div className="grid md:grid-cols-2 gap-12 items-start">
+                        <Carousel className="w-full">
+                            <CarouselContent>
+                                {product.imageUrls.length > 0 ? product.imageUrls.map((url, index) => (
+                                    <CarouselItem key={index}>
+                                        <div className="relative aspect-square rounded-lg overflow-hidden shadow-2xl">
+                                            <Image
+                                                src={url}
+                                                alt={`${product.name} image ${index + 1}`}
+                                                fill
+                                                className="object-cover"
+                                            />
+                                        </div>
+                                    </CarouselItem>
+                                )) : (
+                                     <CarouselItem>
+                                        <div className="relative aspect-square rounded-lg overflow-hidden shadow-2xl bg-secondary flex items-center justify-center">
+                                            <ShoppingCart className="w-24 h-24 text-muted-foreground" />
+                                        </div>
+                                    </CarouselItem>
+                                )}
+                            </CarouselContent>
+                            <CarouselPrevious className="absolute left-4 top-1/2 -translate-y-1/2" />
+                            <CarouselNext className="absolute right-4 top-1/2 -translate-y-1/2" />
+                        </Carousel>
 
-                            <h2 className="text-2xl font-bold font-headline mb-4">Features</h2>
-                            <ul className="space-y-3 mb-8">
-                                {product.features.map((feature, index) => (
-                                    <li key={index} className="flex items-center gap-3">
-                                        <CheckCircle className="text-primary w-6 h-6"/>
-                                        <span className="text-muted-foreground">{feature}</span>
-                                    </li>
-                                ))}
-                            </ul>
+                        <div className="space-y-6">
+                            <h1 className="text-4xl md:text-5xl font-bold font-headline">{product.name}</h1>
+                            
+                            <div className="flex items-baseline gap-4">
+                               {product.discountPercentage && product.discountPercentage > 0 ? (
+                                    <>
+                                        <p className="text-4xl font-bold text-primary">{formatCurrency(calculateDiscountedPrice(product.price, product.discountPercentage))}</p>
+                                        <p className="text-2xl font-medium text-muted-foreground line-through">{formatCurrency(product.price)}</p>
+                                        <Badge variant="destructive">{product.discountPercentage}% OFF</Badge>
+                                    </>
+                                ) : (
+                                    <p className="text-4xl font-bold text-primary">{formatCurrency(product.price)}</p>
+                                )}
+                            </div>
 
-                            <Button size="lg" className="w-full md:w-auto">
+                            <p className="text-lg text-muted-foreground">{product.description}</p>
+                            
+                            <Separator />
+
+                            {features.length > 0 && (
+                                <div>
+                                    <h2 className="text-2xl font-bold font-headline mb-4">Features</h2>
+                                    <ul className="space-y-3">
+                                        {features.map((feature: string, index: number) => (
+                                            <li key={index} className="flex items-center gap-3">
+                                                <CheckCircle className="text-primary w-6 h-6"/>
+                                                <span className="text-muted-foreground">{feature}</span>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            )}
+
+                            <Button size="lg" className="w-full md:w-auto text-lg">
                                 Add to Cart <ShoppingCart className="ml-2"/>
                             </Button>
                         </div>
@@ -94,11 +135,4 @@ export default function KitDetailPage({ params }: { params: { kitId: string } })
             <Footer />
         </div>
     );
-}
-
-// Generate static paths for all kits
-export async function generateStaticParams() {
-  return products.map((product) => ({
-    kitId: product.id,
-  }));
 }

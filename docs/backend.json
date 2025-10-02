@@ -83,6 +83,21 @@
         "registeredAt": { "type": "string", "format": "date-time" }
       },
       "required": ["workshopId", "userId", "userName", "userEmail", "registeredAt"]
+    },
+    "product": {
+      "title": "Product",
+      "description": "A product available for purchase in the shop.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "description": "The name of the product." },
+        "description": { "type": "string", "description": "A detailed description of the product." },
+        "price": { "type": "number", "description": "The price of the product." },
+        "discountPercentage": { "type": "number", "description": "The discount percentage to apply." },
+        "imageUrls": { "type": "array", "items": { "type": "string", "format": "uri" }, "description": "An array of URLs for the product images." },
+        "features": { "type": "array", "items": { "type": "string" }, "description": "A list of product features." },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "description", "price", "createdAt"]
     }
   },
   "auth": {
@@ -108,6 +123,12 @@
         "$ref": "#/entities/workshopRegistration"
       },
       "description": "Stores user registrations for a specific workshop."
+    },
+    "/products/{productId}": {
+      "schema": {
+        "$ref": "#/entities/product"
+      },
+      "description": "Stores all available products for the shop."
     }
   }
 }
