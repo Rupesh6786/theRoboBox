@@ -38,6 +38,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
+import Image from "next/image";
 
 const menuItems = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
@@ -83,7 +84,7 @@ export default function AdminLayout({
   if (loading) {
     return (
       <div className="flex h-screen items-center justify-center bg-background">
-        <Bot className="h-16 w-16 animate-spin text-primary" />
+        <Image src="/img/logofavicon.ico" alt="Loading..." width={64} height={64} className="animate-spin" />
       </div>
     );
   }

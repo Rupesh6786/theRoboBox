@@ -4,7 +4,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { getAuth, onAuthStateChanged, signOut, type User } from 'firebase/auth';
 import { app } from '@/lib/firebase';
-import { Bot } from 'lucide-react';
+import Image from 'next/image';
 
 interface AuthContextType {
   user: User | null;
@@ -39,7 +39,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   if (loading) {
     return (
         <div className="flex h-screen items-center justify-center bg-background">
-            <Bot className="h-16 w-16 animate-spin text-primary" />
+            <Image src="/img/logofavicon.ico" alt="Loading..." width={64} height={64} className="animate-spin" />
         </div>
     );
   }

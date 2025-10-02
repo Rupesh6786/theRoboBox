@@ -41,7 +41,7 @@ export default function Footer() {
       <div className="container mx-auto px-4 py-8 md:px-6">
         <div className="flex flex-col items-center justify-between gap-6 sm:flex-row">
           <div className="flex items-center gap-2">
-            <Image src="/img/logofavicon.ico" alt="The RoboBox Favicon" width={24} height={24} />
+            <Image src="/img/logofavicon.ico" alt="The RoboBox Favicon" width={32} height={32} />
             <p className="text-sm font-semibold">
               The RoboBox
             </p>

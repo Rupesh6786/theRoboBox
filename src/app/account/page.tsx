@@ -9,8 +9,9 @@ import Footer from "@/components/layout/footer";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { LogOut, User, Mail, Phone, MapPin, ShoppingBag, Settings, Bot } from "lucide-react";
+import { LogOut, User, Mail, Phone, MapPin, ShoppingBag, Settings } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
+import Image from "next/image";
 
 export default function AccountPage() {
     const { user, loading, logout } = useAuth();
@@ -25,7 +26,7 @@ export default function AccountPage() {
     if (loading || !user) {
         return (
             <div className="flex h-screen items-center justify-center bg-background">
-                <Bot className="h-16 w-16 animate-spin text-primary" />
+                <Image src="/img/logofavicon.ico" alt="Loading..." width={64} height={64} className="animate-spin" />
             </div>
         );
     }
