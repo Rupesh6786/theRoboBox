@@ -159,11 +159,11 @@ export default function Header() {
             />
         </Link>
         
-        <div className="hidden md:flex flex-1"></div>
-
-        <nav className="hidden items-center gap-6 text-sm md:flex">
-            {renderNavLinks()}
-        </nav>
+        <div className="hidden md:flex flex-1 justify-center">
+            <nav className="flex items-center gap-6 text-sm">
+                {renderNavLinks()}
+            </nav>
+        </div>
 
         <div className="flex flex-1 items-center justify-end gap-4">
             {/* Desktop Search & Login */}
