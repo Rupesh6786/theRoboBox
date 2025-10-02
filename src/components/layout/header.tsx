@@ -177,12 +177,12 @@ export default function Header() {
               <span className="sr-only">Search</span>
             </Button>
           {user ? (
-            <Button asChild className="hidden md:flex">
-              <Link href="/account"><User className="mr-2"/> My Account</Link>
+            <Button asChild className="h-9 w-9" variant="ghost" size="icon">
+              <Link href="/account"><User className="h-5 w-5"/></Link>
             </Button>
           ) : (
-            <Button asChild className="hidden md:flex">
-              <Link href="/login">Login</Link>
+            <Button asChild className="h-9 w-9" variant="ghost" size="icon">
+              <Link href="/login"><User className="h-5 w-5"/></Link>
             </Button>
           )}
           <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
