@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useRef, useEffect, type MouseEvent, useCallback } from "react";
@@ -45,7 +46,7 @@ export default function DiscountGenerator() {
       context.fillStyle = "#e6e6fa"; // Lavender accent color
       context.fillRect(0, 0, context.canvas.width, context.canvas.height);
       context.fillStyle = "#4169E1"; // Royal blue primary color
-      context.font = "bold 24px 'Space Grotesk'";
+      context.font = "bold 48px 'Space Grotesk'";
       context.textAlign = "center";
       context.textBaseline = "middle";
       context.fillText("SCRATCH TO REVEAL", context.canvas.width / 2, context.canvas.height / 2);
@@ -65,7 +66,7 @@ export default function DiscountGenerator() {
     if (context) {
       context.globalCompositeOperation = "destination-out";
       context.beginPath();
-      context.arc(x, y, 24, 0, 2 * Math.PI);
+      context.arc(x, y, 60, 0, 2 * Math.PI);
       context.fill();
     }
   };
