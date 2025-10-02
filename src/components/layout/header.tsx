@@ -155,9 +155,11 @@ export default function Header() {
             alt="Company Logo"
             width={180}
             height={74}
-            className="h-12 w-auto md:h-16"
+            className="h-12 w-auto md:h-20"
             />
         </Link>
+        
+        <div className="hidden md:flex flex-1"></div>
 
         <nav className="hidden items-center gap-6 text-sm md:flex">
             {renderNavLinks()}
