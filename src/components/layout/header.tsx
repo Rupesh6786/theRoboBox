@@ -148,14 +148,14 @@ export default function Header() {
     <>
     <SearchCommand open={searchOpen} onOpenChange={setSearchOpen} />
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-24 items-center px-4 md:px-6">
+      <div className="container flex h-16 items-center px-4 md:px-6 md:h-24">
         <Link href="/" className="mr-6 flex items-center">
             <Image
             src="/img/logo.png"
             alt="Company Logo"
             width={180}
             height={74}
-            className="h-12 w-auto md:h-20"
+            className="h-16 w-auto md:h-20"
             />
         </Link>
         
@@ -165,7 +165,7 @@ export default function Header() {
             </nav>
         </div>
 
-        <div className="flex flex-1 items-center justify-end gap-4">
+        <div className="flex flex-1 items-center justify-end gap-2">
             {/* Desktop Search & Login */}
             <div className="hidden md:flex items-center gap-2">
                 <div className="flex items-center gap-2 border rounded-md px-2 bg-white">
@@ -189,7 +189,7 @@ export default function Header() {
             </div>
 
             {/* Mobile Icons */}
-            <div className="flex items-center md:hidden">
+            <div className="flex items-center gap-2 md:hidden">
                 <Button
                     variant="ghost"
                     size="icon"
@@ -204,8 +204,8 @@ export default function Header() {
                     <Link href="/account"><User className="h-5 w-5"/></Link>
                     </Button>
                 ) : (
-                    <Button asChild className="h-9 w-9" variant="ghost" size="icon">
-                    <Link href="/login"><User className="h-5 w-5"/></Link>
+                    <Button asChild size="sm">
+                        <Link href="/login">Login</Link>
                     </Button>
                 )}
                 <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
@@ -247,3 +247,4 @@ export default function Header() {
     </>
   );
 }
+
