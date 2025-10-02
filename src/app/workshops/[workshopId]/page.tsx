@@ -18,6 +18,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 
 export default function WorkshopDetailPage({ params }: { params: { workshopId: string } }) {
+    const { workshopId } = params;
     const router = useRouter();
     const { user, loading: authLoading } = useAuth();
     const [workshop, setWorkshop] = useState<Workshop | null>(null);
@@ -25,7 +26,7 @@ export default function WorkshopDetailPage({ params }: { params: { workshopId: s
 
     useEffect(() => {
         const fetchWorkshop = async () => {
-            const docRef = doc(db, "workshops", params.workshopId);
+            const docRef = doc(db, "workshops", workshopId);
             const docSnap = await getDoc(docRef);
 
             if (docSnap.exists()) {
@@ -37,10 +38,10 @@ export default function WorkshopDetailPage({ params }: { params: { workshopId: s
         };
 
         fetchWorkshop();
-    }, [params.workshopId]);
+    }, [workshopId]);
 
     const handleRegister = () => {
-        const destination = `/workshops/${params.workshopId}/register`;
+        const destination = `/workshops/${workshopId}/register`;
         if (user) {
             router.push(destination);
         } else {
