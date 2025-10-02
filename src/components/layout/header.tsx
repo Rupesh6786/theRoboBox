@@ -17,6 +17,7 @@ import { useAuth } from "@/context/auth-context";
 import { ScrollArea } from "../ui/scroll-area";
 import { SearchCommand } from "../search-command";
 import { cn } from "@/lib/utils";
+import { Input } from "../ui/input";
 
 const navLinks = [
   {
@@ -167,17 +168,31 @@ export default function Header() {
           </nav>
         </div>
 
-        <div className="flex items-center justify-end space-x-2 md:space-x-4">
+        <div className="flex items-center justify-end md:gap-4">
+           {/* Desktop Search */}
+           <div className="hidden md:flex items-center gap-2 border rounded-md px-2">
+             <Search className="h-5 w-5 text-muted-foreground" />
+             <Input 
+                type="search" 
+                placeholder="Search..." 
+                className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 bg-transparent h-9"
+                onFocus={() => setSearchOpen(true)}
+              />
+           </div>
+
+           {/* Mobile Search Icon */}
            <Button
               variant="ghost"
               size="icon"
               onClick={() => setSearchOpen(true)}
-              className="h-9 w-9"
+              className="h-9 w-9 md:hidden"
             >
               <Search className="h-5 w-5" />
               <span className="sr-only">Search</span>
             </Button>
-          <div className="hidden md:flex items-center gap-2">
+          
+          {/* Desktop Login/Account Button */}
+          <div className="hidden md:flex items-center">
             {user ? (
               <Button asChild variant="ghost">
                 <Link href="/account">My Account</Link>
@@ -188,7 +203,9 @@ export default function Header() {
               </Button>
             )}
           </div>
-          <div className="md:hidden flex items-center">
+
+          {/* Mobile Login/Account Icon & Menu */}
+          <div className="flex items-center md:hidden">
             {user ? (
                 <Button asChild className="h-9 w-9" variant="ghost" size="icon">
                 <Link href="/account"><User className="h-5 w-5"/></Link>
@@ -237,5 +254,3 @@ export default function Header() {
     </>
   );
 }
-
-    
