@@ -4,7 +4,7 @@
 import { useState, useRef, useEffect, type MouseEvent, useCallback } from "react";
 import { generateDiscountCode, type DiscountCodeOutput } from "@/ai/flows/dynamic-discount-codes";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Gift, Loader2, AlertTriangle } from "lucide-react";
+import { Gift, Loader2, AlertTriangle, Copy, Check } from "lucide-react";
 import { Button } from "../ui/button";
 
 export default function DiscountGenerator() {
@@ -13,6 +13,7 @@ export default function DiscountGenerator() {
   const [error, setError] = useState<string | null>(null);
   const [isRevealed, setIsRevealed] = useState(false);
   const [isInteractionStarted, setIsInteractionStarted] = useState(false);
+  const [copied, setCopied] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const isDrawing = useRef(false);
 
@@ -96,6 +97,13 @@ export default function DiscountGenerator() {
     getDiscount();
   };
 
+  const handleCopy = () => {
+    if (!discount?.discountCode) return;
+    navigator.clipboard.writeText(discount.discountCode);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
   return (
     <section id="discount" className="bg-background">
       <div className="container mx-auto">
@@ -135,9 +143,18 @@ export default function DiscountGenerator() {
                       {discount?.discountPercentage}% OFF
                     </p>
                     <p className="text-lg text-muted-foreground">coupon! Use code:</p>
-                    <p className="mt-2 rounded-md bg-primary/10 px-4 py-2 font-mono text-2xl font-bold text-primary">
-                      {discount?.discountCode}
-                    </p>
+                    <div className="mt-2 rounded-md bg-primary/10 px-4 py-2 flex items-center justify-center gap-4">
+                      <span className="font-mono text-2xl font-bold text-primary">
+                        {discount?.discountCode}
+                      </span>
+                       <Button variant="ghost" size="icon" onClick={handleCopy}>
+                        {copied ? (
+                            <Check className="h-6 w-6 text-green-500" />
+                        ) : (
+                            <Copy className="h-6 w-6 text-primary" />
+                        )}
+                        </Button>
+                    </div>
                   </>
                 ) : (
                    <div className="text-center text-muted-foreground">
