@@ -1,3 +1,4 @@
+
 import { Bot, Instagram, Linkedin } from "lucide-react";
 import Link from "next/link";
 
@@ -14,10 +15,10 @@ const WhatsappIcon = (props: React.SVGProps<SVGSVGElement>) => (
       strokeLinejoin="round"
       {...props}
     >
-      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
-      <path d="M14.05 6.05A9 9 0 0 1 20 12h-2a7 7 0 0 0-5.95-5.95v-2.05zm-4.01 0A5 5 0 0 1 15 11h-2a3 3 0 0 0-3-3V6.05z" />
+        <path d="M21.44,11.35,12.86,2.77A2.34,2.34,0,0,0,9.52,2.77L1,9.52a2.34,2.34,0,0,0,0,3.31l8.58,8.58a2.34,2.34,0,0,0,3.31,0l8.58-8.58a2.34,2.34,0,0,0,0-3.31Z"></path>
+        <line x1="8" y1="12" x2="16" y2="12"></line>
     </svg>
-  );
+);
   
   const YoutubeIcon = (props: React.SVGProps<SVGSVGElement>) => (
     <svg
