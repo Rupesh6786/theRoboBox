@@ -1,45 +1,76 @@
 
+"use client";
+
 import { Bot, Calendar, Clock, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Header from "@/components/layout/header";
 import Footer from "@/components/layout/footer";
-import { notFound } from "next/navigation";
+import { notFound, useRouter } from "next/navigation";
 import Image from "next/image";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
-
-const workshops = [
-  {
-    id: "robotics-insight",
-    title: "Insight to Robotics",
-    description: "A beginner-friendly workshop covering the fundamentals of robotics, from basic electronics to simple programming.",
-    instructor: "Dr. Eva Rostova",
-    date: "October 12, 2024",
-    duration: "3 Hours",
-    image: PlaceHolderImages.find((img) => img.id === 'info-2')
-  },
-  {
-    id: "all-in-one",
-    title: "All in one Masterclass",
-    description: "A comprehensive masterclass for enthusiasts looking to dive deep into mechatronics, AI, and autonomous systems.",
-    instructor: "Prof. Kenji Tanaka",
-    date: "October 19-20, 2024",
-    duration: "2 Days",
-    image: PlaceHolderImages.find((img) => img.id === 'hero-2')
-  },
-  {
-    id: "scratch-to-pro",
-    title: "Master class (Scratch to Pro)",
-    description: "Take your skills from zero to hero. This intensive course covers everything from Scratch block-based coding to advanced Python for robotics.",
-    instructor: "Maria Garcia",
-    date: "November 2-3, 2024",
-    duration: "2 Days",
-    image: PlaceHolderImages.find((img) => img.id === 'info-1')
-  },
-];
+import { useAuth } from "@/context/auth-context";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "@/lib/firebase";
+import type { Workshop } from "@/app/admin/workshops/page";
+import { Skeleton } from "@/components/ui/skeleton";
 
 
 export default function WorkshopDetailPage({ params }: { params: { workshopId: string } }) {
-    const workshop = workshops.find(w => w.id === params.workshopId);
+    const router = useRouter();
+    const { user, loading: authLoading } = useAuth();
+    const [workshop, setWorkshop] = useState<Workshop | null>(null);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchWorkshop = async () => {
+            const docRef = doc(db, "workshops", params.workshopId);
+            const docSnap = await getDoc(docRef);
+
+            if (docSnap.exists()) {
+                setWorkshop({ id: docSnap.id, ...docSnap.data() } as Workshop);
+            } else {
+                notFound();
+            }
+            setLoading(false);
+        };
+
+        fetchWorkshop();
+    }, [params.workshopId]);
+
+    const handleRegister = () => {
+        const destination = `/workshops/${params.workshopId}/register`;
+        if (user) {
+            router.push(destination);
+        } else {
+            router.push(`/login?redirect=${destination}`);
+        }
+    };
+    
+    if (loading || authLoading) {
+      return (
+        <div className="flex flex-col min-h-dvh bg-background">
+          <Header />
+          <main className="flex-1">
+            <Skeleton className="h-[40vh] w-full" />
+            <section className="py-12 md:py-24">
+              <div className="container mx-auto">
+                <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto bg-card p-8 rounded-lg shadow-lg -mt-32 relative z-20">
+                  <Skeleton className="h-12 w-full" />
+                  <Skeleton className="h-12 w-full" />
+                  <Skeleton className="h-12 w-full" />
+                </div>
+                <div className="max-w-4xl mx-auto mt-12 text-center">
+                  <Skeleton className="h-12 w-48 mx-auto" />
+                </div>
+              </div>
+            </section>
+          </main>
+          <Footer />
+        </div>
+      );
+    }
 
     if (!workshop) {
         notFound();
@@ -50,9 +81,9 @@ export default function WorkshopDetailPage({ params }: { params: { workshopId: s
             <Header />
             <main className="flex-1">
                  <section className="relative py-24 md:py-32 lg:py-40 bg-secondary/30">
-                    {workshop.image && (
+                    {workshop.imageUrl && (
                         <Image 
-                            src={workshop.image.imageUrl}
+                            src={workshop.imageUrl}
                             alt={workshop.title}
                             fill
                             className="object-cover z-0 opacity-20"
@@ -94,7 +125,7 @@ export default function WorkshopDetailPage({ params }: { params: { workshopId: s
                             </div>
                         </div>
                         <div className="max-w-4xl mx-auto mt-12 text-center">
-                            <Button size="lg">Register for Workshop</Button>
+                            <Button size="lg" onClick={handleRegister}>Register for Workshop</Button>
                         </div>
                     </div>
                 </section>
@@ -104,9 +135,10 @@ export default function WorkshopDetailPage({ params }: { params: { workshopId: s
     );
 }
 
-// Generate static paths for all workshops
-export async function generateStaticParams() {
-  return workshops.map((workshop) => ({
-    workshopId: workshop.id,
-  }));
-}
+// This function can be removed if you are fetching workshops dynamically.
+// If you want to keep it for performance, you'd fetch from Firestore at build time.
+// export async function generateStaticParams() {
+//   // Fetch all workshop IDs from Firestore here to generate static pages.
+//   // For now, returning an empty array to indicate dynamic rendering.
+//   return [];
+// }

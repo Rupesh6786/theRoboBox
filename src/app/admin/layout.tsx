@@ -23,6 +23,7 @@ import {
   ChevronDown,
   Bot,
   MessageSquareQuote,
+  GraduationCap,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -45,6 +46,7 @@ const menuItems = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
   { href: "/admin/products", label: "Products", icon: Box },
   { href: "/admin/kits", label: "Kits", icon: Wrench },
+  { href: "/admin/workshops", label: "Workshops", icon: GraduationCap },
   { href: "/admin/users", label: "Users", icon: Users },
   { href: "/admin/enquiries", label: "Enquiries", icon: MessageSquareQuote },
   { href: "/admin/settings", label: "Settings", icon: Settings },
@@ -111,7 +113,7 @@ export default function AdminLayout({
               <SidebarMenuItem key={item.href}>
                 <SidebarMenuButton
                   asChild
-                  isActive={pathname === item.href}
+                  isActive={pathname.startsWith(item.href) && (item.href !== '/admin' || pathname === '/admin')}
                   tooltip={{ children: item.label, side: "right" }}
                 >
                   <Link href={item.href}>
@@ -134,7 +136,7 @@ export default function AdminLayout({
           <SidebarTrigger className="md:hidden" />
           <div className="flex-1">
             <h1 className="text-lg font-semibold">
-              {menuItems.find((item) => item.href === pathname)?.label || "Dashboard"}
+              {menuItems.find((item) => pathname.startsWith(item.href) && (item.href !== '/admin' || pathname === '/admin'))?.label || "Dashboard"}
             </h1>
           </div>
           <DropdownMenu>

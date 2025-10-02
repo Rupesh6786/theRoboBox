@@ -1,17 +1,101 @@
-
+/**
+ * @fileoverview Firestore Security Rules for Prototyping.
+ *
+ * Core Philosophy:
+ * This ruleset prioritizes security by strictly controlling access to data
+ * based on user authentication and, where applicable, document ownership.
+ * Data schema validation is relaxed to enable rapid prototyping.
+ *
+ * Data Structure:
+ * - /enquiries/{enquiryId}: Stores user enquiries. Access is restricted
+ *   based on user role (admin) or ownership (user who submitted the enquiry).
+ *
+ * Key Security Decisions:
+ * - Admin Role:  Enquiries can only be created by authenticated users.
+ *   Admin users have full read and write access to all enquiries.  Admin status
+ *   is determined by checking for the existence of the user's UID within a
+ *   predefined list of admin UIDs.  This list must be manually updated within
+ *   the `isAdmin()` function.
+ * - Ownership:  Enquiries are "owned" by the user who created them. Only the
+ *   owner or an admin can view or modify an enquiry.
+ *
+ * Denormalization for Authorization:
+ * - The `enquiries` documents include a `userId` field, denormalizing the user's
+ *   UID directly onto the document. This allows for simpler and more efficient
+ *   security rules without requiring additional database reads.
+ *
+ * Structural Segregation:
+ * - N/A - There's no need to segregate data as all documents are of the same type.
+ */
 rules_version = '2';
-
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Deny all reads and writes by default.
-    match /{document=**} {
-      allow read, write: if false;
+
+    /**
+     * @description Checks if the user is signed in.
+     * @path N/A
+     * @allow N/A
+     * @deny N/A
+     * @principle Requires user authentication for certain operations.
+     */
+    function isSignedIn() {
+      return request.auth != null;
     }
 
-    // Allow admin to read and write to the enquiries collection
+    /**
+     * @description Checks if the user is an admin.
+     * @path N/A
+     * @allow N/A
+     * @deny N/A
+     * @principle Restricts certain operations to admin users only.
+     */
+    function isAdmin() {
+        // CRITICAL: Replace with your actual admin UIDs.
+        let adminUids = ['admin1', 'admin2'];
+        return isSignedIn() && adminUids.hasAny([request.auth.uid]);
+    }
+
+    /**
+     * @description Checks if the user is the owner of the document based on userId.
+     * @path N/A
+     * @allow N/A
+     * @deny N/A
+     * @principle Enforces document ownership.
+     */
+    function isOwner(userId) {
+        return isSignedIn() && request.auth.uid == userId;
+    }
+
+    /**
+     * @description Checks if the user is the existing owner of the document based on userId, also verifies that the document exists.
+     * @path N/A
+     * @allow N/A
+     * @deny N/A
+     * @principle Enforces document ownership and verifies document existence.
+     */
+    function isExistingOwner(userId) {
+        return isOwner(userId) && resource != null;
+    }
+
+    /**
+     * @description Security rules for the /enquiries collection.
+     * @path /enquiries/{enquiryId}
+     * @allow (create) - User with valid auth creates a new enquiry with matching userId.
+     * @allow (get, list) - Admin can read any enquiry.
+     * @allow (update, delete) - Admin can modify any enquiry.
+     * @deny (create) - Unauthenticated user attempts to create an enquiry.
+     * @deny (update, delete) - Non-owner attempts to modify an enquiry.
+     * @principle Enforces ownership for enquiries, allows admin access.
+     */
     match /enquiries/{enquiryId} {
-       allow read, write: if request.auth != null && request.auth.uid == 'jy39QM0BtDROwlkLPZvFFV4H8mk2';
-       allow create: if request.auth != null;
+      // Read permissions
+      allow get: if isAdmin() || isOwner(resource.data.userId);
+      allow list: if isAdmin();
+
+      // Write permissions
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+      allow update: if isAdmin() || isExistingOwner(resource.data.userId);
+      allow delete: if isAdmin() || isExistingOwner(resource.data.userId);
     }
   }
 }
