@@ -168,7 +168,7 @@ export default function Header() {
           </nav>
         </div>
 
-        <div className="flex items-center justify-end md:gap-4">
+        <div className="flex items-center justify-end gap-2">
            {/* Desktop Search */}
            <div className="hidden md:flex items-center gap-2 border rounded-md px-2">
              <Search className="h-5 w-5 text-muted-foreground" />
@@ -254,3 +254,5 @@ export default function Header() {
     </>
   );
 }
+
+    
